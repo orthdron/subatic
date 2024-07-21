@@ -6,21 +6,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "kysely": "kysely",
+    "migrate": "kysely migrate:up",
+    "codegen": "kysely-codegen --dialect postgres --camel-case --out-file ./database/kysely-types.d.ts"
   },
   "dependencies": {
+    "@lucia-auth/adapter-postgresql": "^3.1.2",
+    "@node-rs/argon2": "^1.8.3",
+    "@types/pg": "^8.11.6",
+    "dotenv": "^16.4.5",
+    "kysely": "^0.27.4",
+    "kysely-codegen": "^0.15.0",
+    "lucia": "^3.2.0",
+    "next": "14.2.5",
+    "pg": "^8.12.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
+    "@types/node": "^20.14.11",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "kysely-ctl": "^0.8.11",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "typescript": "^5.5.3"
   }
 }
