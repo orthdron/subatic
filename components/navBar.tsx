@@ -8,7 +8,7 @@ export default async function NavBar() {
     return (
         <div className="border-b-2 border-white flex flex-col md:flex-row items-center justify-between px-4">
             <div className="flex items-center">
-                <img className="h-14 p-2" src="logo.webp" alt="subatic logo" />
+                <a href="/"><img className="h-14 p-2" src="/logo.webp" alt="subatic logo" /></a>
             </div>
             <div className="flex-grow text-center my-4 md:my-0 w-11/12 lg:w-1/2">
                 <SearchBox />
@@ -18,7 +18,7 @@ export default async function NavBar() {
                     (
                         <>
                             <a href="/videos">
-                                Your Videos
+                                My Videos
                             </a>
                             <a href="/upload">
                                 Upload
