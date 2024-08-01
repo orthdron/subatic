@@ -58,10 +58,10 @@ export default async function Page({
         return (
             <div className="p-4">
                 {videos.length === 0 ? (
-                    <p className="text-center text-4xl">No videos found for "{term}" 😢</p>
+                    <p className="text-center text-4xl">No videos found for &quot;{term}&quot; 😢</p>
                 ) : (
                     <>
-                        <h1 className="text-2xl mb-4">Search results for "{term}"</h1>
+                        <h1 className="text-2xl mb-4">Search results for &quot;{term}&quot;</h1>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                             {videos.map((video) => (
                                 <VideoThumbnail key={video.id || video.title} video={video} />
