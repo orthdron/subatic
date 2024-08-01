@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const requestSchema = z.object({
     id: z.string(),
-    status: z.enum(["DONE", "FAILED", "IN_QUEUE", "PROCESSING", "REJECTED", "UPLOADING", "USER_STATUS_UPLOADED"]),
+    status: z.enum(["DONE", "FAILED"]),
     token: z.string(),
 });
 

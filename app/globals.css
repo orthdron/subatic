@@ -23,8 +23,6 @@ body {
   --video-brand: var(--brand-color);
   --video-focus-ring-color: var(--focus-color);
   --video-border-radius: 2px;
-
-  /* 👉 https://vidstack.io/docs/player/components/layouts/default#css-variables for more. */
 }
 
 .player[data-view-type="audio"] .vds-poster {

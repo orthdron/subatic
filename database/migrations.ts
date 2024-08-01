@@ -46,12 +46,12 @@ $$;
 
     await db.schema
         .createType('video_status')
-        .asEnum(['UPLOADING', 'USER_STATUS_UPLOADED', 'IN_QUEUE', 'PROCESSING', 'DONE', 'FAILED', 'REJECTED'])
+        .asEnum(['UPLOADING', 'DONE', 'FAILED'])
         .execute();
 
     await db.schema
         .createTable('user')
-        .addColumn('id', 'varchar', (col) => col.primaryKey().defaultTo(sql`nanoid(10, 'abcdefghijklmnopqrstuvwxyz')`))
+        .addColumn('id', 'varchar', (col) => col.primaryKey().defaultTo(sql`nanoid(10, 'abcdefghijklmnopqrstuvwxyz0123456789')`))
         .addColumn('user_name', 'varchar', (col) => col.notNull().unique())
         .addColumn('email', 'varchar', (col) => col.notNull().unique())
         .addColumn('password_hash', 'varchar', (col) => col.notNull())
@@ -62,13 +62,13 @@ $$;
 
     await db.schema
         .createTable('video')
-        .addColumn('id', 'varchar', (col) => col.primaryKey().defaultTo(sql`nanoid(10, 'abcdefghijklmnopqrstuvwxyz')`))
+        .addColumn('id', 'varchar', (col) => col.primaryKey().defaultTo(sql`nanoid(10, 'abcdefghijklmnopqrstuvwxyz0123456789')`))
         .addColumn('user_id', 'varchar', (col) => col.notNull().references('user.id'))
         .addColumn('title', 'varchar', (col) => col.notNull())
         .addColumn('description', 'varchar', (col) => col.notNull())
         .addColumn('createdAt', 'timestamp', (col) => col.defaultTo(sql`now()`).notNull())
-        .addColumn('duration', 'integer')
-        .addColumn('status', sql`video_status`, (col) => col.defaultTo('UPLOADING'))
+        .addColumn('duration', 'integer', (col) => col.notNull().defaultTo(0))
+        .addColumn('status', sql`video_status`, (col) => col.defaultTo('UPLOADING').notNull())
         .execute();
 
 
@@ -83,7 +83,7 @@ $$;
 export async function down(db: Kysely<any>): Promise<void> {
     await db.schema.dropTable('video').execute();
     await db.schema.dropType('video_status').execute();
-    await sql`DROP FUNCTION IF EXISTS nanoid(int, text, float);`.execute(db);
     await db.schema.dropTable('user_session').execute();
     await db.schema.dropTable('user').execute();
+    await sql`DROP FUNCTION IF EXISTS nanoid(int, text, float);`.execute(db);
 }

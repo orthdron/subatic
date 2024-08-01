@@ -1,40 +1,32 @@
 import { db } from "@/database/db";
 import { lucia } from "@/lib/auth";
+import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
 
 import { hash } from "@node-rs/argon2";
 import { generateIdFromEntropySize } from "lucia";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+export async function POST(req: Request) {
+    const formData = await req.json();
 
-async function signup(formData: FormData): Promise<ActionResult> {
-    "use server";
-    const username = formData.get("username");
-    // username must be between 4 ~ 31 characters, and only consists of lowercase letters, 0-9, -, and _
-    // keep in mind some database (e.g. mysql) are case insensitive
+    const username = formData.username;
     if (
         typeof username !== "string" ||
         username.length < 3 ||
         username.length > 31 ||
         !/^[a-z0-9_-]+$/.test(username)
     ) {
-        return {
-            error: "Invalid username"
-        };
+        return NextResponse.json({ error: "Invalid username" }, { status: 400 });
     }
-
-    const email = formData.get("email");
+    const email = formData.email;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (typeof email !== "string" || !emailRegex.test(email)) {
-        return {
-            error: "Invalid email format"
-        };
+        return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    const password = formData.get("password");
+
+    const password = formData.password;
     if (typeof password !== "string" || password.length < 6 || password.length > 255) {
-        return {
-            error: "Invalid password"
-        };
+        return NextResponse.json({ error: "Invalid password length" }, { status: 400 });
     }
 
     const passwordHash = await hash(password, {
@@ -50,28 +42,21 @@ async function signup(formData: FormData): Promise<ActionResult> {
         .selectAll()
         .where((eb) => eb.or([
             eb('user.userName', '=', username.toLowerCase()),
-            eb('user.email', '=', username.toLowerCase())
+            eb('user.email', '=', email.toLowerCase())
         ])).limit(1).execute();
     if (existingUser.length > 0) {
-        return {
-            error: "User already exists"
-        }
+        return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
     db.insertInto("user").values({
         id: userId,
-        email: email,
-        userName: username,
+        email: email.toLowerCase(),
+        userName: username.toLowerCase(),
         passwordHash: passwordHash
     }).executeTakeFirstOrThrow();
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-    return redirect("/");
-}
 
-interface ActionResult {
-    error: string;
+    return NextResponse.json({ sucess: "Signup successful." }, { status: 200 });
 }
-
-export default signup;

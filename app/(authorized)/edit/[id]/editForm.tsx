@@ -19,10 +19,10 @@ export default function EditVideoForm({ video }: { video: { id: string, title: s
             toast.error("Title needs to be at least 5 characters");
             return;
         }
-        if (!description) {
-            toast.error("Please add some description");
-            return;
-        }
+        // if (!description) {
+        //     toast.error("Please add some description");
+        //     return;
+        // }
         if (typeof id != "string") {
             toast.error("Something wrong with title");
             return;
