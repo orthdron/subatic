@@ -1,10 +1,22 @@
 
 import VideoPlayer from "@/components/videoPlayer";
+import { db } from "@/database/db";
+import { redirect } from "next/navigation";
 // import Recommendations from "./recommendations";
 // import UserDetails from "./userDetails";
 
-export default function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: { id: string } }) {
     const { id } = params;
+
+    const video = await db.selectFrom('video')
+        .selectAll()
+        .where('id', '=', id)
+        .limit(1)
+        .executeTakeFirst();
+
+    if (!video) {
+        redirect('/');
+    }
 
     const publicUrl = process.env.NEXT_PUBLIC_FILE_URL;
 
@@ -14,6 +26,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const videoProps = {
         url: `${publicUrl}${id}/master.m3u8`,
         vtt: `${publicUrl}${id}/sprite.vtt`,
+        ...video
     };
 
     return (

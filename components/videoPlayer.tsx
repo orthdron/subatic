@@ -13,17 +13,18 @@ import {
 
 interface VideoPlayerProps {
     url: string;
+    title: string;
     vtt?: string;
     poster?: string;
     other?: string;
 }
 export default function VideoPlayer({ props }: { props: VideoPlayerProps }) {
-    const { url, poster, vtt } = props;
+    const { url, poster, vtt, title } = props;
     return (
         <MediaPlayer
-            autoplay
+            autoPlay
             className="p-0 m-0"
-            title="Sprite Fight"
+            title={title}
             src={url}
             load="eager"
             aspectRatio="16 / 9"
