@@ -1,9 +1,16 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Input } from "./ui/input";
 
 export default function SearchBox() {
-    const [searchTerm, setSearchTerm] = useState('');
+
+    const pathname = usePathname();
+
+    // Extract the search term from the URL path
+    const searchTermDefault = pathname.startsWith('/search/') ? pathname.replace('/search/', '') : '';
+
+    const [searchTerm, setSearchTerm] = useState(searchTermDefault || '');
 
     const handleSearch = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
