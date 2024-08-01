@@ -20,12 +20,12 @@ export async function POST(req: NextRequest) {
 
         const { id, status, token } = result.data;
 
-        if (!process.env.PRESHARED_KEY) {
-            console.warn("PRESHARED_KEY is not set in environment variables.");
-            return NextResponse.json({ error: "Server configuration error. Missing PRESHARED_KEY" }, { status: 500 });
+        if (!process.env.WEBHOOK_TOKEN) {
+            console.warn("WEBHOOK_TOKEN is not set in environment variables.");
+            return NextResponse.json({ error: "Server configuration error. Missing WEBHOOK_TOKEN" }, { status: 500 });
         }
 
-        if (token !== process.env.PRESHARED_KEY) {
+        if (token !== process.env.WEBHOOK_TOKEN) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
