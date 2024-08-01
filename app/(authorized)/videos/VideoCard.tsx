@@ -33,7 +33,7 @@ const VideoCard: React.FC<{ video: Video; publicUrl: string }> = ({ video, publi
                         {video.createdAt.toLocaleDateString()}
                     </div>
 
-                    <Link href={`/edit/${video.id}`} className="text-blue-500 hover:text-blue-700 transition-colors flex items-center">
+                    <Link href={`/video/${video.id}`} className="text-blue-500 hover:text-blue-700 transition-colors flex items-center">
                         <span className="mr-1">▶️</span>
                         Watch
                     </Link>
