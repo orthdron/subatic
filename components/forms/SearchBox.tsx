@@ -1,7 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Input } from "./ui/input";
 
 export default function SearchBox() {
 

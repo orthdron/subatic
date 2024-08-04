@@ -6,7 +6,7 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import VideoThumbnail from "@/components/videoThumbnail";
+import VideoThumbnail from "@/components/video/VideoThumbnail";
 import { db } from "@/database/db";
 import { sql } from "kysely";
 
@@ -14,6 +14,24 @@ const VIDEOS_PER_PAGE = 8;
 const MAX_VISIBLE_PAGES = 5;
 
 type PageNumber = number | '...';
+
+
+export async function generateMetadata({
+    params,
+    searchParams
+}: {
+    params: { term: string };
+    searchParams: { page: string };
+}) {
+    let page = '1';
+    if (searchParams.page) {
+        page = searchParams.page;
+    }
+    return {
+        title: `Subatic - Search ${params.term} - Page ${page}`,
+        description: `Searching for ${params.term} - Page ${page}`,
+    };
+}
 
 export default async function Page({
     params,

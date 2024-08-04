@@ -1,6 +1,14 @@
-import StorageCostComparison from "./storageCost";
-import StreamingCostComparison from "./streamingCost";
-import TranscodingCostComparison from "./transcodingCost";
+import StorageCostComparison from "@/components/graphs/StorageCost";
+import StreamingCostComparison from "@/components/graphs/StreamingCost";
+import TranscodingCostComparison from "@/components/graphs/TranscodingCost";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: 'Subatic - About',
+    description:
+        'About this project',
+};
+
 
 export default async function Page() {
     return (

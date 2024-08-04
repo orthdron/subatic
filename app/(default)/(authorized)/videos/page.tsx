@@ -1,8 +1,15 @@
+import VideoCard from "@/components/video/VideoCard";
 import { db } from "@/database/db";
 import { validateRequest } from "@/lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Toaster } from "react-hot-toast";
-import VideoCard from "./VideoCard";
+
+export const metadata: Metadata = {
+    title: 'Subatic - Your video',
+    description:
+        'Manage your videos',
+};
 
 export default async function MyVideos() {
     const { user } = await validateRequest();

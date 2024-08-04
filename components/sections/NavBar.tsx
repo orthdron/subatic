@@ -1,5 +1,5 @@
-import SearchBox from "@/components/searchBox";
 import { validateRequest } from "@/lib/auth";
+import SearchBox from "../forms/SearchBox";
 
 export default async function NavBar() {
 

@@ -1,6 +1,13 @@
+import CreateVideoForm from "@/components/forms/CreateVideoForm";
 import { validateRequest } from "@/lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import CreateVideoForm from "./createVideoForm";
+
+export const metadata: Metadata = {
+    title: 'Subatic - Upload video',
+    description:
+        'Upload new subatic video',
+};
 
 export default async function Page() {
     const { user } = await validateRequest();

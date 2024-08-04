@@ -1,7 +1,14 @@
+import EditVideoForm from "@/components/forms/EditForm";
 import { db } from "@/database/db";
 import { validateRequest } from "@/lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import EditVideoForm from "./editForm";
+
+export const metadata: Metadata = {
+    title: 'Subatic - Edit video',
+    description:
+        'Edit your subatic video',
+};
 
 export default async function Page({ params }: { params: { id: string } }) {
 

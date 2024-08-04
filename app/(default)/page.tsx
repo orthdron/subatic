@@ -6,13 +6,20 @@ import {
   PaginationNext,
   PaginationPrevious
 } from "@/components/ui/pagination";
-import VideoThumbnail from "@/components/videoThumbnail";
+import VideoThumbnail from "@/components/video/VideoThumbnail";
 import { db } from "@/database/db";
+import { Metadata } from "next";
 
 const VIDEOS_PER_PAGE = 8;
 const MAX_VISIBLE_PAGES = 5;
 
 type PageNumber = number | '...';
+
+export const metadata: Metadata = {
+  title: 'Subatic',
+  description:
+    'Video hosting platform',
+};
 
 export default async function Home({
   searchParams,
