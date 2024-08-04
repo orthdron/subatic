@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Subatic: Main application service
+  subatic:
+    image: ghcr.io/orthdron/subatic:latest
+    container_name: subatic
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/subatic
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - BUCKET_NAME=${BUCKET_NAME}
+      - MAX_FILE_SIZE=5
+      - NEXT_PUBLIC_FILE_URL=${NEXT_PUBLIC_FILE_URL}
+      - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Subatic Transcoder: Service for transcoding uploaded files
+  subatic-transcoder:
+    image: ghcr.io/orthdron/subatic-transcoder:latest
+    container_name: subatic-transcoder
+    environment:
+      - AWS_ACCESS_KEY_ID_1=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY_1=${AWS_SECRET_ACCESS_KEY}
+      - AWS_BUCKET_1=${BUCKET_NAME}
+      - AWS_SQS_URL=${AWS_SQS_URL}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID_2=${CLOUDFLARE_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY_2=${CLOUDFLARE_SECRET_ACCESS_KEY}
+      - AWS_BUCKET_2=${CLOUDFLARE_R2_BUCKET}
+      - AWS_ENDPOINT_2=${CLOUDFLARE_R2_ENDPOINT}
+      - WEBHOOK_URL=http://subatic:3000
+      - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
+    depends_on:
+      subatic:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # PostgreSQL: Database service for Subatic
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=subatic
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
