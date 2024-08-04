@@ -37,6 +37,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const videoProps = {
         url: `${publicUrl}${id}/master.m3u8`,
         vtt: `${publicUrl}${id}/sprite.vtt`,
+        poster: `${publicUrl}${id}/poster.jpeg`,
         ...video
     };
 

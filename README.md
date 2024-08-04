@@ -28,8 +28,9 @@ Follow these steps to get started:
 ]
 ```
 
-10. **Set Up the Transcoding Pipeline**: Refer to the [Transcoding Repository](https://github.com/orthdron/subatic-transcoding) for instructions.
-11. **Deploy Your Application**: During deployment, make sure to set the environment variables listed below.
+10. **Enable caching in Cloudflare**: Refer to [Cloudflare Documentation](https://developers.cloudflare.com/cache/how-to/cache-rules/create-dashboard/) and [this](https://developers.cloudflare.com/cache/how-to/cache-rules/examples/cache-everything/) on how to enable caching for your public domain that is connected to R2.
+11. **Set Up the Transcoding Pipeline**: Refer to the [Transcoding Repository](https://github.com/orthdron/subatic-transcoding) for instructions.
+12. **Deploy Your Application**: During deployment, make sure to set the environment variables listed below.
 
 ## Docker Compose Deployment
 

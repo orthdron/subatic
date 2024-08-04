@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 async function fetchVideoData(id: string) {
     return await db.selectFrom('video')
         .innerJoin('user', 'user.id', 'video.userId')
-        .select(['video.id', 'video.title', 'video.description', 'user.userName'])
+        .select(['video.id', 'video.title', 'video.description', 'user.userName', 'video.status'])
         .where('video.id', '=', id)
         .limit(1)
         .executeTakeFirst();
@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const { id } = params;
     const video = await fetchVideoData(id);
 
-    if (!video) {
+    if (!video || video.status != 'DONE') {
         redirect('/');
     }
 
@@ -39,6 +39,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const videoProps = {
         url: `${publicUrl}${id}/master.m3u8`,
         vtt: `${publicUrl}${id}/sprite.vtt`,
+        poster: `${publicUrl}${id}/poster.jpeg`,
         ...video
     };
 
