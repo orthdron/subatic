@@ -210,7 +210,7 @@ export default async function Page() {
                     <li>The autoscaling of transcoding servers is missing.</li>
                     <li>You can substitute self hosted transcoding with AWS mediaconvert or coconut for a complete serverless experience</li>
                     <li>Postgres can be replaced with sqlite if running small instance</li>
-                    <li>Self hosting transcoding might not be as efficient as cloud providers'. I have heard from sources that their transcoding is better (better compression without losing on quality).</li>
+                    <li>Self hosting transcoding might not be as efficient as cloud providers&apos;. I have heard from sources that their transcoding is better (better compression without losing on quality).</li>
                 </ul>
             </section>
 

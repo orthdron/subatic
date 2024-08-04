@@ -51,7 +51,7 @@ export default function Page() {
                     <div>
                         <h2 className="text-2xl font-semibold mb-2 text-green-300">Open Source Freedom</h2>
                         <p className="text-lg">
-                            We believe in transparency and community-driven development. Subatic is proudly open source, allowing you to explore, contribute, and customize to your heart's content.
+                            We believe in transparency and community-driven development. Subatic is proudly open source, allowing you to explore, contribute, and customize to your heart&apos;s content.
                         </p>
                         <a
                             href="https://github.com/orthdron/subatic"
@@ -69,7 +69,7 @@ export default function Page() {
                     <div>
                         <h2 className="text-2xl font-semibold mb-2 text-purple-300">Our Journey</h2>
                         <p className="text-lg">
-                            Every project has a story, and Subatic's tale is one of innovation, challenges, and triumphs. We've poured our passion into creating a platform that revolutionizes video sharing.
+                            Every project has a story, and Subatic&apos;s tale is one of innovation, challenges, and triumphs. I&apos;ve poured our passion into creating a platform that revolutionizes video sharing.
                         </p>
                         <a
                             href="https://subatic.com/story"
