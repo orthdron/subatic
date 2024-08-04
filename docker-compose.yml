@@ -49,7 +49,7 @@ services:
 
   # PostgreSQL: Database service for Subatic
   postgres:
-    image: postgres:14-alpine
+    image: postgres:16-alpine
     container_name: postgres
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
