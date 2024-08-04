@@ -4,11 +4,12 @@ import { db } from "@/database/db";
 import { headers } from 'next/headers';
 import { redirect } from "next/navigation";
 import { Toaster } from "react-hot-toast";
+import { VideoObject } from 'schema-dts';
 
 async function fetchVideoData(id: string) {
     return await db.selectFrom('video')
         .innerJoin('user', 'user.id', 'video.userId')
-        .select(['video.id', 'video.title', 'video.description', 'user.userName', 'video.status'])
+        .select(['video.id', 'video.title', 'video.description', 'user.userName', 'video.status', 'video.createdAt'])
         .where('video.id', '=', id)
         .limit(1)
         .executeTakeFirst();
@@ -48,22 +49,45 @@ export default async function Page({ params }: { params: { id: string } }) {
     const domain = headersList.get('host') || '';
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
+    const schema: VideoObject = {
+        '@type': 'VideoObject',
+        name: video.title,
+        description: video.description,
+        thumbnailUrl: videoProps.poster,
+        uploadDate: new Date(video.createdAt).toISOString(),
+        contentUrl: videoProps.url,
+        embedUrl: `${protocol}://${domain}/embed/${id}`,
+        publisher: {
+            "@type": "Organization",
+            name: "Subatic",
+            logo: {
+                "@type": "ImageObject",
+                url: `${protocol}://${domain}/logo.webp`
+            }
+        }
+    }
+
     // Generate the embed code using the current domain
     const embedCode = `<iframe src="${protocol}://${domain}/embed/${id}" width="560" height="315" frameborder="0" allowfullscreen></iframe>`;
 
     return (
-        <div className="container mx-auto px-4 pt-4">
-            <Toaster position="bottom-center" />
-            <div className="max-w-4xl mx-auto">
-                <div className="mb-4">
-                    <VideoPlayer props={videoProps} />
+        <>
+            <script type="application/ld+json">
+                {JSON.stringify(schema)}
+            </script>
+            <div className="container mx-auto px-4 pt-4">
+                <Toaster position="bottom-center" />
+                <div className="max-w-4xl mx-auto">
+                    <div className="mb-4">
+                        <VideoPlayer props={videoProps} />
+                    </div>
+                    <div className="bg-gray-800 p-4 rounded-lg mb-4">
+                        <h2 className="text-2xl font-bold mb-2 text-white">{video.title}</h2>
+                        <p className="text-gray-300">Uploaded by: {video.userName}</p>
+                    </div>
+                    <EmbedCodeSection embedCode={embedCode} />
                 </div>
-                <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                    <h2 className="text-2xl font-bold mb-2 text-white">{video.title}</h2>
-                    <p className="text-gray-300">Uploaded by: {video.userName}</p>
-                </div>
-                <EmbedCodeSection embedCode={embedCode} />
             </div>
-        </div>
+        </>
     );
 }

@@ -5,8 +5,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: 'Subatic - Story - Hunt to find the cheapest way to host videos',
-    description:
-        'Story of subatic',
+    description: 'Story of subatic',
 };
 
 
