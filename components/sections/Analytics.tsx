@@ -2,21 +2,16 @@ import Script from 'next/script';
 
 const validateEnvVariables = () => {
     const variables = {
-        ENABLE_UMAMI: process.env.NEXT_PUBLIC_ENABLE_UMAMI,
-        UMAMI_URL: process.env.NEXT_PUBLIC_UMAMI_URL,
-        UMAMI_ID: process.env.NEXT_PUBLIC_UMAMI_ID,
-        ENABLE_PLAUSIBLE: process.env.NEXT_PUBLIC_ENABLE_PLAUSIBLE,
-        PLAUSIBLE_HOST: process.env.NEXT_PUBLIC_PLAUSIBLE_HOST,
-        PLAUSIBLE_DOMAIN: process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN,
-        ENABLE_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ANALYTICS,
-        GOOGLE_ANALYTICS_ID: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
+        ENABLE_UMAMI: process.env.ENABLE_UMAMI,
+        UMAMI_URL: process.env.UMAMI_URL,
+        UMAMI_ID: process.env.UMAMI_ID,
+        ENABLE_PLAUSIBLE: process.env.ENABLE_PLAUSIBLE,
+        PLAUSIBLE_HOST: process.env.PLAUSIBLE_HOST,
+        PLAUSIBLE_DOMAIN: process.env.PLAUSIBLE_DOMAIN,
+        ENABLE_GOOGLE_ANALYTICS: process.env.ENABLE_GOOGLE_ANALYTICS,
+        GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID,
     };
 
-    Object.entries(variables).forEach(([key, value]) => {
-        if (value === undefined) {
-            console.warn(`Environment variable ${key} is not defined.`);
-        }
-    });
 
     if (variables.ENABLE_UMAMI === 'true') {
         if (!variables.UMAMI_URL || !variables.UMAMI_ID) {
@@ -40,16 +35,16 @@ const validateEnvVariables = () => {
 export default async function Analytics() {
     validateEnvVariables();
 
-    const enableUmami = process.env.NEXT_PUBLIC_ENABLE_UMAMI === 'true';
-    const umamiUrl = process.env.NEXT_PUBLIC_UMAMI_URL;
-    const umamiId = process.env.NEXT_PUBLIC_UMAMI_ID;
+    const enableUmami = process.env.ENABLE_UMAMI === 'true';
+    const umamiUrl = process.env.UMAMI_URL;
+    const umamiId = process.env.UMAMI_ID;
 
-    const enablePlausible = process.env.NEXT_PUBLIC_ENABLE_PLAUSIBLE === 'true';
-    const plausibleHost = process.env.NEXT_PUBLIC_PLAUSIBLE_HOST;
-    const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+    const enablePlausible = process.env.ENABLE_PLAUSIBLE === 'true';
+    const plausibleHost = process.env.PLAUSIBLE_HOST;
+    const plausibleDomain = process.env.PLAUSIBLE_DOMAIN;
 
-    const enableGoogleAnalytics = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ANALYTICS === 'true';
-    const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+    const enableGoogleAnalytics = process.env.ENABLE_GOOGLE_ANALYTICS === 'true';
+    const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID;
 
     return (
         <>
