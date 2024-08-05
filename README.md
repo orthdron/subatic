@@ -63,6 +63,19 @@ BUCKET_NAME=                      # Name of your S3 bucket
 MAX_FILE_SIZE=                    # Maximum file size for uploads (in Megabytes)
 NEXT_PUBLIC_FILE_URL=             # Cloudflare R2 public domain
 WEBHOOK_TOKEN=                    # Random Token for webhook notifications. Shared between this and transcoder.
+
+# Optional variables
+
+ENABLE_UMAMI="true"               # Enable / Disable Umami analytics
+UMAMI_URL=<umami-hosted-url>      # URL of your Umami instance
+UMAMI_ID=<data-website-id_from_umami>  # Website ID from Umami for tracking
+
+ENABLE_PLAUSIBLE="false"          # Enable / Disable Plausible analytics
+PLAUSIBLE_HOST=<plausible-hosted-url>  # URL of your Plausible instance
+PLAUSIBLE_DOMAIN=<your-domain>    # Your domain for tracking with Plausible
+
+ENABLE_GOOGLE_ANALYTICS="false"   # Enable / Disable Google Analytics
+GOOGLE_ANALYTICS_ID=<ga-id>       # Your Google Analytics tracking ID
 ```
 
 #### For Subatic-Transcoder
