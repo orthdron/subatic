@@ -2,7 +2,7 @@
 
 The most affordable solution for hosting your videos. Learn more about us here: [About Subatic](https://subatic.com/about)
 
-[Architecture](./docs/assets/architecture.png)
+![Architecture](./docs/assets/architecture.png)
 
 ## Setup Instructions
 
