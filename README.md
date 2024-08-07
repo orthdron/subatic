@@ -1,6 +1,8 @@
 ![Subatic](./public/logo.webp)
 
-The most affordable solution for hosting your videos. Learn more about us here: [About Subatic](https://subatic.com/about)
+The most affordable solution for hosting your videos.
+
+[Read the origin story on how we reduced our streaming cost by 99.46%](https://subatic.com/story)
 
 ![Architecture](./docs/assets/architecture.png)
 
