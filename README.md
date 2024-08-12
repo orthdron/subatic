@@ -126,6 +126,7 @@ UPLOAD_S3_ENDPOINT=YOUR_UPLOAD_S3_ENDPOINT
 # Webhook configuration
 WEBHOOK_URL=http://localhost:3000/
 WEBHOOK_TOKEN=YOUR_WEBHOOK_TOKEN
+MARK_FAILED_AFTER=600 # time after which a processing video is marked as failed, and moved to queue
 ```
 
 #### For PostgreSQL

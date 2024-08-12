@@ -52,6 +52,7 @@ services:
       PLAUSIBLE_DOMAIN=<your-domain>
       ENABLE_GOOGLE_ANALYTICS="false"
       GOOGLE_ANALYTICS_ID=<ga-id>
+      MARK_FAILED_AFTER=<move_video_back_to_queue_after_these_many_minutes>
     ports:
       - "3000:3000"
     depends_on:
