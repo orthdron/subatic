@@ -6,7 +6,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type VideoStatus = "DONE" | "FAILED" | "UPLOADING" | "UPLOADED" | "PROCESSING";
+export type VideoStatus = "DONE" | "FAILED" | "PROCESSING" | "UPLOADED" | "UPLOADING";
 
 export interface User {
   createdAt: Generated<Timestamp>;
@@ -27,8 +27,8 @@ export interface Video {
   description: string;
   duration: Generated<number>;
   id: Generated<string>;
-  status: Generated<VideoStatus>;
   lastStatusUpdate: Generated<Timestamp>;
+  status: Generated<VideoStatus>;
   title: string;
   userId: string;
 }
