@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { uploadId, key, parts } = body;
+    const { uploadId, key, id, parts } = body;
+    console.log({ uploadId, key, id, parts });
 
 
     const { s3client, error } = createS3Client();
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
                 status: "UPLOADED"
             })
             .where('userId', '=', user.id)
-            .where('id', '=', key)
+            .where('id', '=', id)
             .execute();
 
         return NextResponse.json({ success: true, data });

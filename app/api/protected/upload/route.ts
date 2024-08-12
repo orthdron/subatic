@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
 
     const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || "0", 10) * 1024 * 1024;
 
-
     const { s3client, error } = createS3Client();
     if (error || !s3client) {
         return NextResponse.json({ error }, { status: 500 });
@@ -44,10 +43,12 @@ export async function POST(req: NextRequest) {
         .returning(['id'])
         .executeTakeFirstOrThrow();
 
+    // Update the Key to include the /uploads directory
+    const key = `uploads/${video.id}`;
 
     const createMultipartUploadCommand = new CreateMultipartUploadCommand({
         Bucket: process.env.BUCKET_NAME!,
-        Key: video.id,
+        Key: key,
         ContentType: contentType
     });
 
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
         for (let partNumber = 1; partNumber <= partCount; partNumber++) {
             const command = new UploadPartCommand({
                 Bucket: process.env.BUCKET_NAME!,
-                Key: video.id,
+                Key: key,
                 UploadId: uploadId,
                 PartNumber: partNumber,
                 ContentLength: Math.min(PART_SIZE, size - (partNumber - 1) * PART_SIZE),
@@ -73,6 +74,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             id: video.id,
+            key,
             uploadId: uploadId,
             parts: presignedUrls,
         });

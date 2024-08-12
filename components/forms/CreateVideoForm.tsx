@@ -59,16 +59,16 @@ export default function CreateVideoForm() {
                 throw new Error(error || "API call failed");
             }
 
-            const { id, uploadId, parts } = await response.json();
+            const { id, key, uploadId, parts } = await response.json();
 
-            await handleMultipartUpload(uploadId, id, parts);
+            await handleMultipartUpload(uploadId, id, key, parts);
 
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Something went wrong");
         }
     };
 
-    const handleMultipartUpload = async (uploadId: string, id: string, parts: { partNumber: number; signedUrl: string }[]) => {
+    const handleMultipartUpload = async (uploadId: string, id: string, key: string, parts: { partNumber: number; signedUrl: string }[]) => {
         toast.loading("Uploading file in parts");
         const uploadedParts = await uploadParts(parts, formData.file!);
 
@@ -78,7 +78,8 @@ export default function CreateVideoForm() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 uploadId,
-                key: id,
+                key,
+                id,
                 parts: uploadedParts,
             }),
         });
