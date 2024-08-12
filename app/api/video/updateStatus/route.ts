@@ -5,33 +5,33 @@ import { z } from "zod";
 const requestSchema = z.object({
     id: z.string(),
     status: z.enum(["DONE", "FAILED"]),
-    token: z.string(),
+    duration: z.number().optional(),
 });
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-
         // Validate the request body
         const result = requestSchema.safeParse(body);
         if (!result.success) {
             return NextResponse.json({ error: "Invalid input", details: result.error.issues }, { status: 400 });
         }
 
-        const { id, status, token } = result.data;
+        const { id, status, duration = 0 } = result.data;
 
+        // Get token from header
+        const token = req.headers.get('X-Webhook-Token');
         if (!process.env.WEBHOOK_TOKEN) {
             console.warn("WEBHOOK_TOKEN is not set in environment variables.");
             return NextResponse.json({ error: "Server configuration error. Missing WEBHOOK_TOKEN" }, { status: 500 });
         }
-
         if (token !== process.env.WEBHOOK_TOKEN) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const dbResult = await db
             .updateTable('video')
-            .set({ status })
+            .set({ status, duration })
             .where('id', '=', id)
             .executeTakeFirst();
 

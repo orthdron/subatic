@@ -46,7 +46,7 @@ $$;
 
     await db.schema
         .createType('video_status')
-        .asEnum(['UPLOADING', 'DONE', 'FAILED', 'UPLOADED'])
+        .asEnum(['UPLOADING', 'DONE', 'FAILED', 'UPLOADED', 'PROCESSING'])
         .execute();
 
     await db.schema
@@ -67,6 +67,7 @@ $$;
         .addColumn('title', 'varchar', (col) => col.notNull())
         .addColumn('description', 'varchar', (col) => col.notNull())
         .addColumn('createdAt', 'timestamp', (col) => col.defaultTo(sql`now()`).notNull())
+        .addColumn('last_status_update', 'timestamp', (col) => col.defaultTo(sql`now()`).notNull())
         .addColumn('duration', 'integer', (col) => col.notNull().defaultTo(0))
         .addColumn('status', sql`video_status`, (col) => col.defaultTo('UPLOADING').notNull())
         .execute();
