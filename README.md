@@ -58,14 +58,18 @@ Make sure to set the following environment variables in your `.env` file:
 
 ```plaintext
 DATABASE_URL=                     # Connection string for your PostgreSQL database
-AWS_ACCESS_KEY_ID=                # Your AWS access key
-AWS_SECRET_ACCESS_KEY=            # Your AWS secret key
-AWS_REGION=                       # AWS region where your resources are located
-BUCKET_NAME=                      # Name of your S3 bucket
-MAX_FILE_SIZE=                    # Maximum file size for uploads (in Megabytes)
-NEXT_PUBLIC_FILE_URL=             # Cloudflare R2 public domain
-WEBHOOK_TOKEN=                    # Random Token for webhook notifications. Shared between this and transcoder.
 
+# Primary upload location
+UPLOAD_S3_ACCESS_KEY_ID=<your_aws_access_key_id>
+UPLOAD_S3_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
+UPLOAD_S3_REGION=<your_aws_region>
+UPLOAD_S3_BUCKET=<your_bucket_name>
+UPLOAD_S3_ENDPOINT=<custom_endpoint>
+# In Megabytes
+MAX_FILE_SIZE=<max_file_size_in_mb>
+# Final upload location url
+NEXT_PUBLIC_FILE_URL=             # public S3 domain where final transcoded videos are stored
+WEBHOOK_TOKEN=                    # Random Token for webhook notifications. Shared between this and transcoder.
 # Optional variables
 
 ENABLE_UMAMI="true"               # Enable / Disable Umami analytics
@@ -83,28 +87,41 @@ GOOGLE_ANALYTICS_ID=<ga-id>       # Your Google Analytics tracking ID
 #### For Subatic-Transcoder
 
 ```plaintext
-# AWS Configuration
-AWS_ACCESS_KEY_ID_1=             # Your AWS access key for transcoding
-AWS_SECRET_ACCESS_KEY_1=         # Your AWS secret key for transcoding
-AWS_BUCKET_1=                     # The S3 bucket used for transcoding
-AWS_SQS_URL=                      # URL of the SQS queue for transcoding
-AWS_REGION=                       # AWS region for transcoding resources
+# Enable or disable SQS
+SQS_ENABLED=false
+SQS_URL=YOUR_SQS_URL
 
-# Cloudflare Configuration
-AWS_ACCESS_KEY_ID_2=             # Your Cloudflare access key
-AWS_SECRET_ACCESS_KEY_2=         # Your Cloudflare secret key
-AWS_BUCKET_2=                     # The R2 bucket used for final uploads
-AWS_ENDPOINT_2=                   # Endpoint for accessing the R2 bucket
+# Download bucket configuration
+DOWNLOAD_S3_ENDPOINT=http://localhost:9000
+DOWNLOAD_S3_ACCESS_KEY_ID=YOUR_DOWNLOAD_S3_ACCESS_KEY_ID
+DOWNLOAD_S3_SECRET_ACCESS_KEY=YOUR_DOWNLOAD_S3_SECRET_ACCESS_KEY
+DOWNLOAD_S3_REGION=YOUR_DOWNLOAD_S3_REGION
+DOWNLOAD_S3_BUCKET=YOUR_DOWNLOAD_BUCKET_NAME
 
-WEBHOOK_URL=                      # URL for webhook notifications (where subatic is deployed)
-WEBHOOK_TOKEN=                    # Random Token for webhook notifications. Shared between this and transcoder.
+# Upload bucket configuration: Can be same as download if public
+UPLOAD_S3_ACCESS_KEY_ID=YOUR_UPLOAD_S3_ACCESS_KEY_ID
+UPLOAD_S3_SECRET_ACCESS_KEY=YOUR_UPLOAD_S3_SECRET_ACCESS_KEY
+UPLOAD_S3_REGION=YOUR_UPLOAD_S3_REGION
+UPLOAD_S3_BUCKET=YOUR_UPLOAD_BUCKET_NAME
+UPLOAD_S3_ENDPOINT=YOUR_UPLOAD_S3_ENDPOINT
+
+# Webhook configuration
+WEBHOOK_URL=http://localhost:3000/
+WEBHOOK_TOKEN=YOUR_WEBHOOK_TOKEN
 ```
 
 #### For PostgreSQL
 
 ```plaintext
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=
+POSTGRES_PASSWORD=                # Your PostgreSQL password
+```
+
+#### For MinIO
+
+```plaintext
+MINIO_ACCESS_KEY=                 # Your MinIO access key
+MINIO_SECRET_KEY=                 # Your MinIO secret key
 ```
 
 Replace the empty values with your actual configuration details.
