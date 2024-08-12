@@ -9,7 +9,7 @@ export default defineConfig({
 		}),
 	}),
 	migrations: {
-		migrationFolder: "database",
+		migrationFolder: "database/migrations",
 	},
 	plugins: [new CamelCasePlugin()],
 })

@@ -1,74 +1,85 @@
 import { db } from "@/database/db";
 import { validateRequest } from "@/lib/auth";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { createS3Client } from "@/lib/s3";
+import {
+    CreateMultipartUploadCommand,
+    UploadPartCommand
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
 import { NextRequest, NextResponse } from "next/server";
-export async function POST(req: NextRequest) {
 
+const PART_SIZE = 10 * 1024 * 1024; // 10MB part size to match client-side CHUNK_SIZE
+
+export async function POST(req: NextRequest) {
     const { user } = await validateRequest();
     if (!user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
-    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+    const { title, size, contentType } = body;
+
     const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || "0", 10) * 1024 * 1024;
-    const region = process.env.AWS_REGION;
-    const bucketName = process.env.BUCKET_NAME;
-    if (
-        !accessKeyId ||
-        !secretAccessKey ||
-        !maxFileSize ||
-        !region ||
-        !bucketName
-    ) {
-        return NextResponse.json(
-            { error: "This functionality is down. Please come back later." },
-            { status: 500 }
-        );
+
+    const { s3client, error } = createS3Client();
+    if (error || !s3client) {
+        return NextResponse.json({ error }, { status: 500 });
     }
-    const fileSize = body.size || 0;
-    if (fileSize == 0) {
+
+    if (size === 0) {
         return NextResponse.json({ error: "Invalid file size." }, { status: 400 });
     }
-    if (fileSize > maxFileSize) {
-        console.log(body.size);
-        console.log(maxFileSize);
-        return NextResponse.json(
-            { error: "File size too large." },
-            { status: 400 }
-        );
+
+    if (size > maxFileSize) {
+        return NextResponse.json({ error: "File size too large." }, { status: 400 });
     }
+
     const video = await db.insertInto("video")
         .values({
-            title: body.title,
+            title: title,
             description: "",
             userId: user.id
         })
         .returning(['id'])
         .executeTakeFirstOrThrow();
 
-    const s3client = new S3Client({
-        region: region,
-        credentials: {
-            accessKeyId: accessKeyId,
-            secretAccessKey: secretAccessKey,
-        },
+    // Update the Key to include the /uploads directory
+    const key = `uploads/${video.id}`;
+
+    const createMultipartUploadCommand = new CreateMultipartUploadCommand({
+        Bucket: process.env.RAWFILES_S3_BUCKET!,
+        Key: key,
+        ContentType: contentType
     });
 
-    const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: video.id,
-        ContentLength: body.size,
-    });
+    try {
+        const multipartUpload = await s3client.send(createMultipartUploadCommand);
+        const uploadId = multipartUpload.UploadId;
 
-    const url = await getSignedUrl(s3client, command, {
-        expiresIn: 14400,
-    });
-    return NextResponse.json({
-        id: video.id,
-        url: url,
-    });
+        // Generate presigned URLs for each part
+        const partCount = Math.ceil(size / PART_SIZE);
+        const presignedUrls = [];
+
+        for (let partNumber = 1; partNumber <= partCount; partNumber++) {
+            const command = new UploadPartCommand({
+                Bucket: process.env.RAWFILES_S3_BUCKET!,
+                Key: key,
+                UploadId: uploadId,
+                PartNumber: partNumber,
+                ContentLength: Math.min(PART_SIZE, size - (partNumber - 1) * PART_SIZE),
+            });
+            const signedUrl = await getSignedUrl(s3client, command, { expiresIn: 3600 });
+            presignedUrls.push({ partNumber, signedUrl });
+        }
+
+        return NextResponse.json({
+            id: video.id,
+            key,
+            uploadId: uploadId,
+            parts: presignedUrls,
+        });
+    } catch (error) {
+        console.error("Error initiating multipart upload:", error);
+        return NextResponse.json({ error: "Failed to initiate upload" }, { status: 500 });
+    }
 }

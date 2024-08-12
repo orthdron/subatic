@@ -1,19 +1,58 @@
 version: '3.8'
 
 services:
-  # Subatic: Main application service
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: <your_postgres_user>
+      POSTGRES_PASSWORD: <your_postgres_password>
+      POSTGRES_DB: subatic
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ACCESS_KEY: YOUR_MINIO_ACCESS_KEY
+      MINIO_SECRET_KEY: YOUR_MINIO_SECRET_KEY
+    ports:
+      - "9000:9000"
+    command: server /data
+    restart: unless-stopped
+    volumes:
+      - minio_data:/data
+
   subatic:
     image: ghcr.io/orthdron/subatic:latest
     container_name: subatic
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/subatic
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_REGION=${AWS_REGION}
-      - BUCKET_NAME=${BUCKET_NAME}
-      - MAX_FILE_SIZE=5
-      - NEXT_PUBLIC_FILE_URL=${NEXT_PUBLIC_FILE_URL}
-      - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
+      DATABASE_URL=postgresql://<your_postgres_user>:<your_postgres_password>@postgres:5432/subatic
+      RAWFILES_S3_ACCESS_KEY_ID=${RAWFILES_S3_ACCESS_KEY_ID}
+      RAWFILES_S3_SECRET_ACCESS_KEY=${RAWFILES_S3_SECRET_ACCESS_KEY}
+      RAWFILES_S3_REGION=<us-east-1>
+      RAWFILES_S3_BUCKET=<your_upload_bucket_name>
+      MAX_FILE_SIZE=<max_file_size_in_mb>
+      NEXT_PUBLIC_FILE_URL=<final_upload_location_url>
+      WEBHOOK_TOKEN=<random_token>
+      ENABLE_UMAMI="true"
+      UMAMI_URL=<umami-hosted-url>
+      UMAMI_ID=<data-website-id_from_umami>
+      ENABLE_PLAUSIBLE="false"
+      PLAUSIBLE_HOST=<plausible-hosted-url>
+      PLAUSIBLE_DOMAIN=<your-domain>
+      ENABLE_GOOGLE_ANALYTICS="false"
+      GOOGLE_ANALYTICS_ID=<ga-id>
+      MARK_FAILED_AFTER=<move_video_back_to_queue_after_these_many_minutes>
     ports:
       - "3000:3000"
     depends_on:
@@ -26,46 +65,29 @@ services:
       timeout: 10s
       retries: 3
 
-  # Subatic Transcoder: Service for transcoding uploaded files
   subatic-transcoder:
     image: ghcr.io/orthdron/subatic-transcoder:latest
     container_name: subatic-transcoder
     environment:
-      - AWS_ACCESS_KEY_ID_1=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY_1=${AWS_SECRET_ACCESS_KEY}
-      - AWS_BUCKET_1=${BUCKET_NAME}
-      - AWS_SQS_URL=${AWS_SQS_URL}
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY_ID_2=${CLOUDFLARE_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY_2=${CLOUDFLARE_SECRET_ACCESS_KEY}
-      - AWS_BUCKET_2=${CLOUDFLARE_R2_BUCKET}
-      - AWS_ENDPOINT_2=${CLOUDFLARE_R2_ENDPOINT}
-      - WEBHOOK_URL=http://subatic:3000
-      - WEBHOOK_TOKEN=${WEBHOOK_TOKEN}
+      SQS_ENABLED=false
+      SQS_URL=YOUR_SQS_URL
+      RAWFILES_S3_ENDPOINT=http://minio:9000
+      RAWFILES_S3_ACCESS_KEY_ID=YOUR_DOWNLOAD_S3_ACCESS_KEY_ID
+      RAWFILES_S3_SECRET_ACCESS_KEY=YOUR_DOWNLOAD_S3_SECRET_ACCESS_KEY
+      RAWFILES_S3_REGION=<us-east-1>
+      RAWFILES_S3_BUCKET=<your_download_bucket_name>
+      PROCESSED_S3_ACCESS_KEY_ID=YOUR_PROCESSED_S3_ACCESS_KEY_ID
+      PROCESSED_S3_SECRET_ACCESS_KEY=YOUR_PROCESSED_S3_SECRET_ACCESS_KEY
+      PROCESSED_S3_REGION=<us-east-1>
+      PROCESSED_S3_BUCKET=<your_upload_bucket_name>
+      PROCESSED_S3_ENDPOINT=http://minio:9000
+      WEBHOOK_URL=http://subatic:3000/
+      WEBHOOK_TOKEN=YOUR_WEBHOOK_TOKEN
     depends_on:
       subatic:
         condition: service_healthy
     restart: unless-stopped
 
-  # PostgreSQL: Database service for Subatic
-  postgres:
-    image: postgres:14-alpine
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=subatic
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres_data:
+  minio_data:
