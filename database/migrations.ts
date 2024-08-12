@@ -46,7 +46,7 @@ $$;
 
     await db.schema
         .createType('video_status')
-        .asEnum(['UPLOADING', 'DONE', 'FAILED'])
+        .asEnum(['UPLOADING', 'DONE', 'FAILED', 'UPLOADED'])
         .execute();
 
     await db.schema

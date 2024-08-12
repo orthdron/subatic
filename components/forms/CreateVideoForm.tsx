@@ -12,6 +12,8 @@ interface FormData {
     progress: number;
 }
 
+const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
+
 export default function CreateVideoForm() {
     const [formData, setFormData] = useState<FormData>({
         title: "",
@@ -47,7 +49,7 @@ export default function CreateVideoForm() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     title: formData.title,
-                    size: formData.file.size.toString(),
+                    size: formData.file.size,
                     contentType: formData.file.type,
                 }),
             });
@@ -57,36 +59,68 @@ export default function CreateVideoForm() {
                 throw new Error(error || "API call failed");
             }
 
-            const { url: preSignedUrl, id } = await response.json();
+            const { id, uploadId, parts } = await response.json();
 
-            toast.loading("Uploading file");
-            await uploadFile(preSignedUrl, formData.file);
+            await handleMultipartUpload(uploadId, id, parts);
 
-            toast.dismiss();
-            toast.success("Upload finished");
-            router.push(`/edit/${id}`);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Something went wrong");
         }
     };
 
-    const uploadFile = (url: string, file: File): Promise<void> => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open("PUT", url, true);
+    const handleMultipartUpload = async (uploadId: string, id: string, parts: { partNumber: number; signedUrl: string }[]) => {
+        toast.loading("Uploading file in parts");
+        const uploadedParts = await uploadParts(parts, formData.file!);
 
-            xhr.upload.addEventListener("progress", (event) => {
-                if (event.lengthComputable) {
-                    const progress = parseFloat(((event.loaded / event.total) * 100).toFixed(2));
-                    setFormData((prevData) => ({ ...prevData, progress }));
-                }
+        // Complete the multipart upload
+        const completeResponse = await fetch("/api/protected/upload/complete-multipart-upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                uploadId,
+                key: id,
+                parts: uploadedParts,
+            }),
+        });
+
+        if (!completeResponse.ok) {
+            const { error } = await completeResponse.json();
+            throw new Error(error || "Failed to complete multipart upload");
+        }
+
+        toast.dismiss();
+        toast.success("Upload finished");
+        router.push(`/edit/${id}`);
+    };
+
+    const uploadParts = async (parts: { partNumber: number; signedUrl: string }[], file: File) => {
+        const uploadedParts = [];
+
+        for (let i = 0; i < parts.length; i++) {
+            const { partNumber, signedUrl } = parts[i];
+            const start = (partNumber - 1) * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, file.size);
+            const chunk = file.slice(start, end);
+
+            const response = await fetch(signedUrl, {
+                method: "PUT",
+                body: chunk,
             });
 
-            xhr.onload = () => xhr.status === 200 ? resolve() : reject(new Error("Upload failed"));
-            xhr.onerror = () => reject(new Error("Network error"));
+            if (!response.ok) {
+                throw new Error(`Failed to upload part ${partNumber}`);
+            }
 
-            xhr.send(file);
-        });
+            const ETag = response.headers.get("ETag");
+            uploadedParts.push({ PartNumber: partNumber, ETag });
+
+            setFormData((prevData) => ({
+                ...prevData,
+                progress: parseFloat(((end / file.size) * 100).toFixed(2)),
+            }));
+        }
+
+        return uploadedParts;
     };
 
     if (formData.progress > 0) {

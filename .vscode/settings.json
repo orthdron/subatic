@@ -1,6 +1,8 @@
 {
   "files.exclude": {
     "node_modules/": true,
-    ".next": true
+    ".next": true,
+    ".vercel": true,
+    ".vscode": true
   }
 }
