@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     const command = new CompleteMultipartUploadCommand({
-        Bucket: process.env.BUCKET_NAME!,
+        Bucket: process.env.RAWFILES_S3_BUCKET!,
         Key: key,
         UploadId: uploadId,
         MultipartUpload: { Parts: parts },

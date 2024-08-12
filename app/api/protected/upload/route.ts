@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const key = `uploads/${video.id}`;
 
     const createMultipartUploadCommand = new CreateMultipartUploadCommand({
-        Bucket: process.env.BUCKET_NAME!,
+        Bucket: process.env.RAWFILES_S3_BUCKET!,
         Key: key,
         ContentType: contentType
     });
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
         for (let partNumber = 1; partNumber <= partCount; partNumber++) {
             const command = new UploadPartCommand({
-                Bucket: process.env.BUCKET_NAME!,
+                Bucket: process.env.RAWFILES_S3_BUCKET!,
                 Key: key,
                 UploadId: uploadId,
                 PartNumber: partNumber,

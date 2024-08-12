@@ -8,7 +8,7 @@ The most affordable solution for hosting your videos.
 
 ## Docker Compose Deployment
 
-We provide a `docker-compose.yml` file for easy deployment of Subatic, Subatic Transcoder, and PostgreSQL. To use it:
+We provide a `docker-compose.yml` file for easy deployment of Subatic, Subatic Transcoder, MinIo and PostgreSQL. To use it:
 
 1. Create a `.env` file (use .env.example) in the same directory as your `docker-compose.yml` file.
 2. Add all the required environment variables (listed below) to the `.env` file.
@@ -42,7 +42,7 @@ Follow these steps to get started:
    (Optional: You can reuse the first key if applicable.)
 
 7. **Make the Bucket Public**  
-   Connect a domain to the bucket for public access.
+   Connect a domain / IP address to the bucket for public access.
 
 8. **(Optional) Set CORS Policy if Using Cloudflare R2**  
    Use the following CORS configuration for your R2 bucket:
@@ -78,11 +78,11 @@ Make sure to set the following environment variables in your `.env` file:
 DATABASE_URL=                     # Connection string for your PostgreSQL database
 
 # Primary upload location
-UPLOAD_S3_ACCESS_KEY_ID=<your_aws_access_key_id>
-UPLOAD_S3_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
-UPLOAD_S3_REGION=<your_aws_region>
-UPLOAD_S3_BUCKET=<your_bucket_name>
-UPLOAD_S3_ENDPOINT=<custom_endpoint>
+RAWFILES_S3_ACCESS_KEY_ID=<your_aws_access_key_id>
+RAWFILES_S3_SECRET_ACCESS_KEY=<your_aws_secret_access_key>
+RAWFILES_S3_REGION=<your_aws_region>
+RAWFILES_S3_BUCKET=<your_bucket_name>
+RAWFILES_S3_ENDPOINT=<custom_endpoint>
 # In Megabytes
 MAX_FILE_SIZE=<max_file_size_in_mb>
 # Final upload location url
@@ -110,18 +110,18 @@ SQS_ENABLED=false
 SQS_URL=YOUR_SQS_URL
 
 # Download bucket configuration
-DOWNLOAD_S3_ENDPOINT=http://localhost:9000
-DOWNLOAD_S3_ACCESS_KEY_ID=YOUR_DOWNLOAD_S3_ACCESS_KEY_ID
-DOWNLOAD_S3_SECRET_ACCESS_KEY=YOUR_DOWNLOAD_S3_SECRET_ACCESS_KEY
-DOWNLOAD_S3_REGION=YOUR_DOWNLOAD_S3_REGION
-DOWNLOAD_S3_BUCKET=YOUR_DOWNLOAD_BUCKET_NAME
+RAWFILES_S3_ACCESS_KEY_ID=http://localhost:9000
+RAWFILES_S3_SECRET_ACCESS_KEY=YOUR_RAWFILES_S3_ACCESS_KEY_ID
+RAWFILES_S3_SECRET_ACCESS_KEY=YOUR_DOWNLOAD_S3_SECRET_ACCESS_KEY
+RAWFILES_S3_REGION=YOUR_DOWNLOAD_S3_REGION
+RAWFILES_S3_BUCKET=YOUR_DOWNLOAD_BUCKET_NAME
 
 # Upload bucket configuration: Can be same as download if public
-UPLOAD_S3_ACCESS_KEY_ID=YOUR_UPLOAD_S3_ACCESS_KEY_ID
-UPLOAD_S3_SECRET_ACCESS_KEY=YOUR_UPLOAD_S3_SECRET_ACCESS_KEY
-UPLOAD_S3_REGION=YOUR_UPLOAD_S3_REGION
-UPLOAD_S3_BUCKET=YOUR_UPLOAD_BUCKET_NAME
-UPLOAD_S3_ENDPOINT=YOUR_UPLOAD_S3_ENDPOINT
+PROCESSED_S3_ACCESS_KEY_ID=YOUR_PROCESSED_S3_ACCESS_KEY_ID
+PROCESSED_S3_SECRET_ACCESS_KEY=YOUR_PROCESSED_S3_SECRET_ACCESS_KEY
+PROCESSED_S3_REGION=YOUR_PROCESSED_S3_REGION
+PROCESSED_S3_BUCKET=YOUR_UPLOAD_BUCKET_NAME
+PROCESSED_S3_ENDPOINT=YOUR_PROCESSED_S3_ENDPOINT
 
 # Webhook configuration
 WEBHOOK_URL=http://localhost:3000/

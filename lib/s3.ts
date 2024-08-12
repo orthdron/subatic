@@ -1,12 +1,12 @@
 import { S3Client } from "@aws-sdk/client-s3";
 
 export function createS3Client() {
-    const accessKeyId = process.env.UPLOAD_S3_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.UPLOAD_S3_SECRET_ACCESS_KEY;
+    const accessKeyId = process.env.RAWFILES_S3_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.RAWFILES_S3_SECRET_ACCESS_KEY;
     const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || "0", 10) * 1024 * 1024;
-    const bucketName = process.env.UPLOAD_S3_BUCKET;
-    const endpoint = process.env.UPLOAD_S3_ENDPOINT;
-    const region = process.env.UPLOAD_S3_REGION;
+    const bucketName = process.env.RAWFILES_S3_BUCKET;
+    const endpoint = process.env.RAWFILES_S3_ENDPOINT;
+    const region = process.env.RAWFILES_S3_REGION;
 
     // Check for required environment variables
     if (!accessKeyId || !secretAccessKey || !maxFileSize || !bucketName || (!region && !endpoint)) {
