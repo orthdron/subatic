@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:14-alpine
+    image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_USER: <your_postgres_user>
-      POSTGRES_PASSWORD: <your_postgres_password>
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: subatic
     ports:
       - "5432:5432"
@@ -14,47 +12,63 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
-
+      
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:latest
     container_name: minio
     environment:
-      MINIO_ACCESS_KEY: YOUR_MINIO_ACCESS_KEY
-      MINIO_SECRET_KEY: YOUR_MINIO_SECRET_KEY
+      MINIO_ROOT_USER: user
+      MINIO_ROOT_PASSWORD: password
     ports:
-      - "9000:9000"
-    command: server /data
-    restart: unless-stopped
+      - "9000:9000"   
+      - "9001:9001"
     volumes:
       - minio_data:/data
+    command: server --console-address ":9001" /data
+    restart: unless-stopped
+  
+  create_buckets:
+    image: minio/mc:latest
+    restart: no
+    depends_on:
+      - minio
+    environment:
+      APIKEY: randomApiKeyUser
+      SECRET: randomApiKeyPassword
+      MINIO_ROOT_USER: user
+      MINIO_ROOT_PASSWORD: password
+      MINIO_HOST: 'http://minio:9000'
+    volumes:
+      - ./docker/createBuckets.sh:/create_buckets.sh
+    entrypoint: ["/bin/sh", "/create_buckets.sh"]
 
   subatic:
-    image: ghcr.io/orthdron/subatic:latest
+    # image: ghcr.io/orthdron/subatic:latest-arm64
+    image: ghcr.io/orthdron/subatic:latest-amd64
+    # build: .
     container_name: subatic
     environment:
-      DATABASE_URL=postgresql://<your_postgres_user>:<your_postgres_password>@postgres:5432/subatic
-      RAWFILES_S3_ACCESS_KEY_ID=${RAWFILES_S3_ACCESS_KEY_ID}
-      RAWFILES_S3_SECRET_ACCESS_KEY=${RAWFILES_S3_SECRET_ACCESS_KEY}
-      RAWFILES_S3_REGION=<us-east-1>
-      RAWFILES_S3_BUCKET=<your_upload_bucket_name>
-      MAX_FILE_SIZE=<max_file_size_in_mb>
-      NEXT_PUBLIC_FILE_URL=<final_upload_location_url>
-      WEBHOOK_TOKEN=<random_token>
-      ENABLE_UMAMI="true"
-      UMAMI_URL=<umami-hosted-url>
-      UMAMI_ID=<data-website-id_from_umami>
-      ENABLE_PLAUSIBLE="false"
-      PLAUSIBLE_HOST=<plausible-hosted-url>
-      PLAUSIBLE_DOMAIN=<your-domain>
-      ENABLE_GOOGLE_ANALYTICS="false"
-      GOOGLE_ANALYTICS_ID=<ga-id>
-      MARK_FAILED_AFTER=<move_video_back_to_queue_after_these_many_minutes>
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/subatic
+      RAWFILES_S3_ACCESS_KEY_ID: randomApiKeyUser
+      RAWFILES_S3_SECRET_ACCESS_KEY: randomApiKeyPassword
+      RAWFILES_S3_REGION: "us-east-1"
+      RAWFILES_S3_BUCKET: subatic
+      RAWFILES_S3_ENDPOINT: "http://minio:9000"
+      MAX_FILE_SIZE: 50000
+      PROCESSED_VIDEO_URL: "http://localhost:9000/subatic"
+      WEBHOOK_TOKEN: someRandomString
+      MARK_FAILED_AFTER: 600
+      APP_HOSTNAME: "http://localhost:3000"
+      ENABLE_TUNNEL: "true"
+      TUNNEL_HOSTNAME: "http://localhost"
+      TUNNEL_PORT: "4000"
     ports:
       - "3000:3000"
+      - "4000:4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,27 +79,27 @@ services:
       timeout: 10s
       retries: 3
 
-  subatic-transcoder:
-    image: ghcr.io/orthdron/subatic-transcoder:latest
-    container_name: subatic-transcoder
+  subatic-transcoding:
+    # image: ghcr.io/orthdron/subatic-transcoding:latest-arm64
+    image: ghcr.io/orthdron/subatic-transcoding:latest-amd64
+    # build: .
+    container_name: subatic-transcoding
     environment:
-      SQS_ENABLED=false
-      SQS_URL=YOUR_SQS_URL
-      RAWFILES_S3_ENDPOINT=http://minio:9000
-      RAWFILES_S3_ACCESS_KEY_ID=YOUR_DOWNLOAD_S3_ACCESS_KEY_ID
-      RAWFILES_S3_SECRET_ACCESS_KEY=YOUR_DOWNLOAD_S3_SECRET_ACCESS_KEY
-      RAWFILES_S3_REGION=<us-east-1>
-      RAWFILES_S3_BUCKET=<your_download_bucket_name>
-      PROCESSED_S3_ACCESS_KEY_ID=YOUR_PROCESSED_S3_ACCESS_KEY_ID
-      PROCESSED_S3_SECRET_ACCESS_KEY=YOUR_PROCESSED_S3_SECRET_ACCESS_KEY
-      PROCESSED_S3_REGION=<us-east-1>
-      PROCESSED_S3_BUCKET=<your_upload_bucket_name>
-      PROCESSED_S3_ENDPOINT=http://minio:9000
-      WEBHOOK_URL=http://subatic:3000/
-      WEBHOOK_TOKEN=YOUR_WEBHOOK_TOKEN
+      SQS_ENABLED: false
+      RAWFILES_S3_ENDPOINT: http://minio:9000
+      RAWFILES_S3_ACCESS_KEY_ID: randomApiKeyUser
+      RAWFILES_S3_SECRET_ACCESS_KEY: randomApiKeyPassword
+      RAWFILES_S3_REGION: "us-east-1"
+      RAWFILES_S3_BUCKET: subatic
+      PROCESSED_S3_ACCESS_KEY_ID: randomApiKeyUser
+      PROCESSED_S3_SECRET_ACCESS_KEY: randomApiKeyPassword
+      PROCESSED_S3_REGION: "us-east-1"
+      PROCESSED_S3_BUCKET: subatic
+      PROCESSED_S3_ENDPOINT: http://minio:9000
+      WEBHOOK_URL: http://subatic:3000/
+      WEBHOOK_TOKEN: someRandomString
     depends_on:
-      subatic:
-        condition: service_healthy
+      - subatic
     restart: unless-stopped
 
 volumes:

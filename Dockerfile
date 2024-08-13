@@ -10,10 +10,19 @@ COPY . .
 
 RUN npm run build
 
-# Create a smaller production image
 FROM node:22-slim AS runner
-RUN npm install -g next
+
+RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
 COPY --from=builder /app .
-EXPOSE 3000
-CMD ["node", "start.js"]
+
+COPY docker/nginx.template /etc/nginx/conf.d/default.conf.template
+COPY docker/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 3000 4000
+
+CMD ["/entrypoint.sh"]
