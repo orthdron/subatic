@@ -6,7 +6,7 @@ export function createS3Client() {
     const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || "0", 10) * 1024 * 1024;
     const bucketName = process.env.RAWFILES_S3_BUCKET;
     const endpoint = process.env.RAWFILES_S3_ENDPOINT;
-    const region = process.env.RAWFILES_S3_REGION;
+    const region = process.env.RAWFILES_S3_REGION || "auto";
 
     // Check for required environment variables
     if (!accessKeyId || !secretAccessKey || !maxFileSize || !bucketName || (!region && !endpoint)) {
@@ -20,20 +20,10 @@ export function createS3Client() {
             secretAccessKey: secretAccessKey,
         },
         forcePathStyle: true,
+        region: region,
+        endpoint: endpoint
     };
 
-    // Set endpoint and region
-    if (endpoint) {
-        s3ClientConfig.endpoint = endpoint;
-        if (endpoint.includes('backblazeb2.com') && !endpoint.includes('.s3.')) {
-            if (!region) {
-                return { error: "AWS_REGION must be set for Backblaze B2" };
-            }
-            s3ClientConfig.region = region;
-        }
-    } else if (region) {
-        s3ClientConfig.region = region;
-    }
 
     // Create and return the S3 client
     const s3client = new S3Client(s3ClientConfig);

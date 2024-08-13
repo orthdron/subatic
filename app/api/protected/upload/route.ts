@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
         .returning(['id'])
         .executeTakeFirstOrThrow();
 
-    // Update the Key to include the /uploads directory
     const key = `uploads/${video.id}`;
 
     const createMultipartUploadCommand = new CreateMultipartUploadCommand({
@@ -56,20 +55,37 @@ export async function POST(req: NextRequest) {
         const multipartUpload = await s3client.send(createMultipartUploadCommand);
         const uploadId = multipartUpload.UploadId;
 
-        // Generate presigned URLs for each part
         const partCount = Math.ceil(size / PART_SIZE);
         const presignedUrls = [];
 
         for (let partNumber = 1; partNumber <= partCount; partNumber++) {
             const command = new UploadPartCommand({
-                Bucket: process.env.RAWFILES_S3_BUCKET!,
+                Bucket: process.env.RAWFILES_S3_BUCKET,
                 Key: key,
                 UploadId: uploadId,
                 PartNumber: partNumber,
                 ContentLength: Math.min(PART_SIZE, size - (partNumber - 1) * PART_SIZE),
             });
             const signedUrl = await getSignedUrl(s3client, command, { expiresIn: 3600 });
-            presignedUrls.push({ partNumber, signedUrl });
+
+
+            const url = new URL(signedUrl);
+
+            if (process.env.ENABLE_TUNNEL) {
+                if (!process.env.TUNNEL_HOSTNAME) {
+                    throw new Error("ENABLE_TUNNEL but missing TUNNEL_HOSTNAME");
+                }
+
+                if (!process.env.TUNNEL_PORT) {
+                    throw new Error("ENABLE_TUNNEL but missing TUNNEL_PORT");
+                }
+
+                url.hostname = new URL(process.env.TUNNEL_HOSTNAME).hostname;
+                url.port = process.env.TUNNEL_PORT;
+            }
+
+
+            presignedUrls.push({ partNumber, signedUrl: url.toString() });
         }
 
         return NextResponse.json({

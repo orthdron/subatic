@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    db.insertInto("user").values({
+    await db.insertInto("user").values({
         id: userId,
         email: email.toLowerCase(),
         userName: username.toLowerCase(),
