@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node start.js",
+    "start": "next start",
     "lint": "next lint",
     "kysely": "kysely",
-    "migrate": "kysely migrate:up",
+    "migrate": "kysely migrate:latest",
     "codegen": "kysely-codegen --dialect postgres --camel-case --out-file ./database/kysely-types.d.ts"
   },
   "dependencies": {
