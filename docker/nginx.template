@@ -1,0 +1,25 @@
+server {
+    listen 4000;
+
+    location / {
+        proxy_pass $RAWFILES_S3_ENDPOINT;
+        proxy_set_header Host '$RAWFILES_S3_HOST';
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Ensure proper handling of large uploads
+        client_max_body_size 0;
+
+        # Disable buffering
+        proxy_buffering off;
+        proxy_request_buffering off;
+
+        # Use HTTP/1.1 for persistent connections
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        # Optional: set a longer timeout if necessary
+        proxy_connect_timeout 300;
+    }
+}

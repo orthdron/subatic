@@ -28,26 +28,26 @@ export default async function Page({ params }: { params: { id: string } }) {
     const { id } = params;
     const video = await fetchVideoData(id);
 
-    if (!video || video.status != 'DONE') {
+    if (!video || video.status !== 'DONE') {
         redirect('/');
     }
 
-    const publicUrl = process.env.NEXT_PUBLIC_FILE_URL;
+    const publicUrl = process.env.PROCESSED_VIDEO_URL;
     if (!publicUrl) {
-        throw new Error("NEXT_PUBLIC_FILE_URL is not defined");
+        throw new Error("PROCESSED_VIDEO_URL is not defined");
     }
 
     const videoProps = {
-        url: `${publicUrl}${id}/master.m3u8`,
-        vtt: `${publicUrl}${id}/sprite.vtt`,
-        poster: `${publicUrl}${id}/poster.jpeg`,
+        url: `${publicUrl}/${id}/master.m3u8`,
+        vtt: `${publicUrl}/${id}/sprite.vtt`,
+        poster: `${publicUrl}/${id}/poster.jpeg`,
         ...video
     };
 
-    // Get the current domain
+    // Get the current domain and protocol
     const headersList = headers();
     const domain = headersList.get('host') || '';
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const protocol = headersList.get('X-Forwarded-Proto') || 'http';
 
     const schema: VideoObject = {
         '@type': 'VideoObject',

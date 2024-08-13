@@ -23,10 +23,10 @@ export default async function MyVideos() {
         .where('userId', '=', user.id)
         .execute();
 
-    const publicUrl = process.env.NEXT_PUBLIC_FILE_URL;
+    const publicUrl = process.env.PROCESSED_VIDEO_URL;
 
     if (!publicUrl) {
-        throw new Error("NEXT_PUBLIC_FILE_URL is not defined");
+        throw new Error("PROCESSED_VIDEO_URL is not defined");
     }
 
     return (

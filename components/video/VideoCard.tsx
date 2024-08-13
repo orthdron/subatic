@@ -5,6 +5,7 @@ interface Video {
     title: string;
     description: string;
     createdAt: Date;
+    status: string;
 }
 
 const VideoCard: React.FC<{ video: Video; publicUrl: string }> = ({ video, publicUrl }) => {
@@ -15,18 +16,24 @@ const VideoCard: React.FC<{ video: Video; publicUrl: string }> = ({ video, publi
             <div className="p-4">
                 <h2 className="text-xl font-bold mb-2 truncate">{video.title}</h2>
                 <p className="text-gray-600 mb-2 line-clamp-2">{video.description}</p>
-                <div className="flex space-x-4 mb-4">
-                    <img
-                        alt="Short preview"
-                        src={`${baseUrl}${video.id}/short.gif`}
-                        className="w-24 h-24 object-cover rounded"
-                    />
-                    <img
-                        alt="Long preview"
-                        src={`${baseUrl}${video.id}/long.gif`}
-                        className="w-24 h-24 object-cover rounded"
-                    />
-                </div>
+                {video.status === "DONE" ? (
+                    <div className="flex space-x-4 mb-4">
+                        <img
+                            alt="Short preview"
+                            src={`${baseUrl}${video.id}/short.gif`}
+                            className="w-24 h-24 object-cover rounded"
+                        />
+                        <img
+                            alt="Long preview"
+                            src={`${baseUrl}${video.id}/long.gif`}
+                            className="w-24 h-24 object-cover rounded"
+                        />
+                    </div>
+                ) : (
+                    <div className="mb-4 p-2 bg-gray-700 rounded text-center text-white">
+                        <span className="text-lg font-semibold">Status: {video.status}</span>
+                    </div>
+                )}
                 <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center">
                         <span className="mr-1">🕒</span>
