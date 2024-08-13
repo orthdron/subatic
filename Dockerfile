@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image with multi-arch support
-FROM --platform=$BUILDPLATFORM node:20-alpine AS builder
+FROM --platform=$BUILDPLATFORM node:22-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -24,7 +24,7 @@ COPY . .
 RUN npm run build
 
 # Production image, copy all the files and run next
-FROM --platform=$TARGETPLATFORM node:20-alpine AS runner
+FROM --platform=$TARGETPLATFORM node:22-alpine AS runner
 
 WORKDIR /app
 
