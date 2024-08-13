@@ -86,7 +86,7 @@ RAWFILES_S3_ENDPOINT=<custom_endpoint>
 # In Megabytes
 MAX_FILE_SIZE=<max_file_size_in_mb>
 # Final upload location url
-NEXT_PUBLIC_FILE_URL=             # public S3 domain where final transcoded videos are stored
+PROCESSED_VIDEO_URL=             # public S3 domain where final transcoded videos are stored
 WEBHOOK_TOKEN=                    # Random Token for webhook notifications. Shared between this and transcoder.
 # Optional variables
 
