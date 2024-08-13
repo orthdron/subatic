@@ -11,6 +11,10 @@ jobs:
       contents: read
       packages: write
 
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,8 +35,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}:latest
-          platforms: linux/amd64,linux/arm64
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-${{ matrix.architecture }}
+            ghcr.io/${{ github.repository }}:latest-${{ matrix.architecture }}
+          platforms: linux/${{ matrix.architecture }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
