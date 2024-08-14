@@ -21,9 +21,10 @@ export function createS3Client() {
         },
         forcePathStyle: true,
         region: region,
-        endpoint: endpoint
     };
-
+    if (endpoint) {
+        s3ClientConfig.endpoint = endpoint;
+    }
 
     // Create and return the S3 client
     const s3client = new S3Client(s3ClientConfig);

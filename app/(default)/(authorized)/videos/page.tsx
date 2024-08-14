@@ -23,7 +23,7 @@ export default async function MyVideos() {
         .where('userId', '=', user.id)
         .execute();
 
-    const publicUrl = process.env.PROCESSED_VIDEO_URL;
+    const publicUrl = process.env.PROCESSED_VIDEO_URL!.replace(/\/+$/, '');
 
     if (!publicUrl) {
         throw new Error("PROCESSED_VIDEO_URL is not defined");

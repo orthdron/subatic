@@ -32,7 +32,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         redirect('/');
     }
 
-    const publicUrl = process.env.PROCESSED_VIDEO_URL;
+    const publicUrl = process.env.PROCESSED_VIDEO_URL!.replace(/\/+$/, '');
     if (!publicUrl) {
         throw new Error("PROCESSED_VIDEO_URL is not defined");
     }
@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const videoProps = {
         url: `${publicUrl}/${id}/master.m3u8`,
         vtt: `${publicUrl}/${id}/sprite.vtt`,
-        poster: `${publicUrl}/${id}/poster.jpeg`,
+        poster: `${publicUrl}/${id}/poster.jpg`,
         ...video
     };
 
