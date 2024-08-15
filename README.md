@@ -1,4 +1,4 @@
-![Subatic](./public/logo.webp)
+![Subatic](./public/logo.svg)
 
 The most affordable solution for hosting your videos.
 
