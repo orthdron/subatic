@@ -1,8 +1,8 @@
-![Subatic](./public/logo.svg)
+<img src="./docs/logo/combined/png/transparent.png" alt="Subatic" width="50%">
 
-The most affordable solution for hosting your videos.
+Simple and straightforward video sharing.
 
-[Read the origin story on how we reduced our streaming cost by 99.46%](https://subatic.com/story)
+[Read our origin story on how we reduced our streaming cost by 99.46%](https://subatic.com/story)
 
 ![Architecture](./docs/assets/architecture.png)
 
