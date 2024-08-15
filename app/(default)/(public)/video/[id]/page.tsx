@@ -62,7 +62,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             name: "Subatic",
             logo: {
                 "@type": "ImageObject",
-                url: `${protocol}://${domain}/logo.webp`
+                url: `${protocol}://${domain}/logo.svg`
             }
         }
     }
