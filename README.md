@@ -1,6 +1,6 @@
 <p align="center">
        <a href="https://subatic.com">
-          <img src="./docs/logo/combined/png/transparent.png" alt="Subatic" height="150">
+          <img src="./docs/logo/combined/png/transparent.png" alt="Subatic" height="100">
         </a>
 </p>
 
