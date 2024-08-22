@@ -1,4 +1,8 @@
-<img src="./docs/logo/combined/png/transparent.png" alt="Subatic" width="50%">
+<p align="center">
+       <a href="https://subatic.com">
+          <img src="./docs/logo/combined/png/transparent.png" alt="Subatic" height="150">
+        </a>
+</p>
 
 ### Simple and straightforward video sharing platform.
 
