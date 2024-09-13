@@ -1,0 +1,10 @@
+{
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "all",
+  "labels": ["automerge"],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "commitMessageAction": "Upgrade",
+  "ignorePresets": ["config:base"]
+}
