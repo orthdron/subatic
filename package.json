@@ -26,7 +26,7 @@
     "kysely-codegen": "^0.16.0",
     "lucia": "^3.2.0",
     "lucide-react": "^0.441.0",
-    "next": "14.2.11",
+    "next": "14.2.12",
     "pg": "^8.12.0",
     "react": "^18",
     "react-dom": "^18",
