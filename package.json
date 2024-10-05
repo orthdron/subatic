@@ -15,7 +15,7 @@
     "@aws-sdk/client-s3": "^3.617.0",
     "@aws-sdk/s3-request-presigner": "^3.617.0",
     "@lucia-auth/adapter-postgresql": "^3.1.2",
-    "@node-rs/argon2": "^1.8.3",
+    "@node-rs/argon2": "^2.0.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@types/pg": "^8.11.6",
     "@vidstack/react": "^1.11.30",
