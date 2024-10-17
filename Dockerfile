@@ -1,4 +1,4 @@
-FROM node:22-slim AS builder
+FROM node:23-slim AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:22-slim AS runner
+FROM node:23-slim AS runner
 
 RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
 
