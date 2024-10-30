@@ -21,11 +21,12 @@ export const metadata: Metadata = {
     'Video hosting platform',
 };
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: { page: string };
-}) {
+export default async function Home(
+  props: {
+    searchParams: Promise<{ page: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const currentPage = Math.max(1, Number(searchParams.page) || 1);
   const offset = (currentPage - 1) * VIDEOS_PER_PAGE;
 

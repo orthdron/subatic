@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     }).executeTakeFirstOrThrow();
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+    (await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
     return NextResponse.json({ sucess: "Signup successful." }, { status: 200 });
 }

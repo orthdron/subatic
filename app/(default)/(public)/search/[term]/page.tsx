@@ -16,13 +16,14 @@ const MAX_VISIBLE_PAGES = 5;
 type PageNumber = number | '...';
 
 
-export async function generateMetadata({
-    params,
-    searchParams
-}: {
-    params: { term: string };
-    searchParams: { page: string };
-}) {
+export async function generateMetadata(
+    props: {
+        params: Promise<{ term: string }>;
+        searchParams: Promise<{ page: string }>;
+    }
+) {
+    const searchParams = await props.searchParams;
+    const params = await props.params;
     let page = '1';
     if (searchParams.page) {
         page = searchParams.page;
@@ -33,13 +34,14 @@ export async function generateMetadata({
     };
 }
 
-export default async function Page({
-    params,
-    searchParams
-}: {
-    params: { term: string };
-    searchParams: { page: string };
-}) {
+export default async function Page(
+    props: {
+        params: Promise<{ term: string }>;
+        searchParams: Promise<{ page: string }>;
+    }
+) {
+    const searchParams = await props.searchParams;
+    const params = await props.params;
     const { term } = params;
     const currentPage = Math.max(1, Number(searchParams.page) || 1);
     const offset = (currentPage - 1) * VIDEOS_PER_PAGE;

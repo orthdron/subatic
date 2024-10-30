@@ -11,7 +11,8 @@ async function fetchVideoData(id: string) {
         .executeTakeFirst();
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     const { id } = params;
     const video = await fetchVideoData(id);
 
@@ -21,7 +22,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     };
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props0: { params: Promise<{ id: string }> }) {
+    const params = await props0.params;
     const { id } = params;
     const video = await fetchVideoData(id);
 
