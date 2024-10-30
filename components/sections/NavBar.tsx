@@ -1,4 +1,5 @@
 import { validateRequest } from "@/lib/auth";
+import Link from 'next/link';
 import SearchBox from "../forms/SearchBox";
 
 export default async function NavBar() {
@@ -8,7 +9,7 @@ export default async function NavBar() {
     return (
         <div className="border-b-2 border-white flex flex-col md:flex-row items-center justify-between px-4">
             <div className="flex items-center">
-                <a href="/"><img className="h-14 p-2" src="/logo.svg" alt="Subatic" /></a>
+                <Link href="/"><img className="h-14 p-2" src="/logo.svg" alt="Subatic" /></Link>
             </div>
             <div className="flex-grow text-center my-4 md:my-0 w-11/12 lg:w-1/2">
                 <SearchBox />
@@ -17,24 +18,24 @@ export default async function NavBar() {
                 {user ?
                     (
                         <>
-                            <a href="/videos">
+                            <Link href="/videos">
                                 My Videos
-                            </a>
-                            <a href="/upload">
+                            </Link>
+                            <Link href="/upload">
                                 Upload
-                            </a>
-                            <a href="/sign-out">
+                            </Link>
+                            <Link href="/sign-out">
                                 Logout
-                            </a>
+                            </Link>
                         </>
                     ) : (
                         <>
-                            <a href="/sign-up">
+                            <Link href="/sign-up">
                                 Sign-Up
-                            </a>
-                            <a href="/sign-in">
+                            </Link>
+                            <Link href="/sign-in">
                                 Login
-                            </a>
+                            </Link>
                         </>
                     )
                 }
