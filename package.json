@@ -25,7 +25,7 @@
     "kysely": "^0.27.4",
     "kysely-codegen": "^0.17.0",
     "lucia": "^3.2.2",
-    "lucide-react": "^0.462.0",
+    "lucide-react": "^0.464.0",
     "next": "15.0.3",
     "pg": "^8.13.1",
     "react": "^18.3.1",
