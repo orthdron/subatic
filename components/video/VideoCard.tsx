@@ -21,16 +21,16 @@ const VideoCard: React.FC<{ video: Video; publicUrl: string }> = ({ video, publi
                         <img
                             alt="Short preview"
                             src={`${baseUrl}${video.id}/short.gif`}
-                            className="w-24 h-24 object-cover rounded"
+                            className="w-24 h-24 object-cover rounded-sm"
                         />
                         <img
                             alt="Long preview"
                             src={`${baseUrl}${video.id}/long.gif`}
-                            className="w-24 h-24 object-cover rounded"
+                            className="w-24 h-24 object-cover rounded-sm"
                         />
                     </div>
                 ) : (
-                    <div className="mb-4 p-2 bg-gray-700 rounded text-center text-white">
+                    <div className="mb-4 p-2 bg-gray-700 rounded-sm text-center text-white">
                         <span className="text-lg font-semibold">Status: {video.status}</span>
                     </div>
                 )}

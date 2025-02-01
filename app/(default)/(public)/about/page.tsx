@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export default function Page() {
     return (
         <div className="max-w-4xl mx-auto px-4 py-12 text-gray-200">
-            <h1 className="text-5xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+            <h1 className="text-5xl font-extrabold mb-8 text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-600">
                 Discover Subatic
             </h1>
 
