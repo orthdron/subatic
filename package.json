@@ -12,17 +12,17 @@
     "codegen": "kysely-codegen --dialect postgres --camel-case --out-file ./database/kysely-types.d.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.682.0",
-    "@aws-sdk/s3-request-presigner": "^3.682.0",
+    "@aws-sdk/client-s3": "^3.740.0",
+    "@aws-sdk/s3-request-presigner": "^3.740.0",
     "@lucia-auth/adapter-postgresql": "^3.1.2",
-    "@node-rs/argon2": "^2.0.0",
-    "@radix-ui/react-slot": "^1.1.0",
-    "@types/pg": "^8.11.10",
+    "@node-rs/argon2": "^2.0.2",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@types/pg": "^8.11.11",
     "@vidstack/react": "^1.12.12",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.5",
-    "kysely": "^0.27.4",
+    "dotenv": "^16.4.7",
+    "kysely": "^0.27.5",
     "kysely-codegen": "^0.17.0",
     "lucia": "^3.2.2",
     "lucide-react": "^0.474.0",
@@ -30,30 +30,26 @@
     "pg": "^8.13.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.4.1",
-    "react-markdown": "^9.0.1",
-    "recharts": "^2.13.1",
+    "react-hot-toast": "^2.5.1",
+    "react-markdown": "^9.0.3",
+    "recharts": "^2.15.1",
     "remark-gfm": "^4.0.0",
     "schema-dts": "^1.1.2",
-    "tailwind-merge": "^3.0.0",
+    "tailwind-merge": "^3.0.1",
     "ts-node": "^10.9.2",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^22.8.4",
+    "@tailwindcss/postcss": "^4.0.2",
+    "@types/node": "^22.13.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "eslint": "^9.13.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.19.0",
     "eslint-config-next": "15.1.6",
-    "kysely-ctl": "^0.10.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "^18.2.21",
-      "@types/react-dom": "^18.2.7"
-    }
+    "kysely-ctl": "^0.10.1",
+    "postcss": "^8.5.1",
+    "tailwindcss": "4.0.2",
+    "typescript": "^5.7.3"
   }
 }

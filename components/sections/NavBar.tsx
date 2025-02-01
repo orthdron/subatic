@@ -11,7 +11,7 @@ export default async function NavBar() {
             <div className="flex items-center">
                 <Link href="/"><img className="h-14 p-2" src="/logo.svg" alt="Subatic" /></Link>
             </div>
-            <div className="flex-grow text-center my-4 md:my-0 w-11/12 lg:w-1/2">
+            <div className="grow text-center my-4 md:my-0 w-11/12 lg:w-1/2">
                 <SearchBox />
             </div>
             <div className="flex flex-row space-x-4 text-center py-4">
