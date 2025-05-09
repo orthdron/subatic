@@ -22,7 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
-    "kysely": "^0.27.5",
+    "kysely": "^0.28.0",
     "kysely-codegen": "^0.18.0",
     "lucia": "^3.2.2",
     "lucide-react": "^0.508.0",
