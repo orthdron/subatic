@@ -21,7 +21,7 @@
     "@vidstack/react": "^1.12.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.0.0",
     "kysely": "^0.28.0",
     "kysely-codegen": "^0.18.0",
     "lucia": "^3.2.2",
