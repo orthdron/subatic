@@ -18,7 +18,7 @@ const StreamingCostComparison = () => (
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="cost" fill="#8884d8">
-                    <LabelList dataKey="cost" position="top" formatter={(value: number) => `$${value.toFixed(2)}`} />
+                    <LabelList dataKey="cost" position="top" formatter={(value: any) => `$${Number(value).toFixed(2)}`} />
                 </Bar>
             </BarChart>
         </ResponsiveContainer>
