@@ -48,7 +48,7 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.32.0",
+    "eslint": "^10.0.0",
     "eslint-config-next": "16.1.6",
     "kysely-ctl": "^0.20.0",
     "postcss": "^8.5.6",
