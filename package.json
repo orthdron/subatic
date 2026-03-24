@@ -53,6 +53,6 @@
     "kysely-ctl": "^0.20.0",
     "postcss": "^8.5.6",
     "tailwindcss": "4.2.2",
-    "typescript": "^5.9.2"
+    "typescript": "^6.0.0"
   }
 }
