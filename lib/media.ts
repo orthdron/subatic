@@ -1,6 +1,6 @@
 /**
  * URLs for the files the transcoder writes for each video
- * (see subatic-transcoding: HLS stream, sprite thumbnails, GIF previews, poster).
+ * (see subatic-transcoding: HLS stream, sprite thumbnails, card previews, poster).
  * Server-only: PROCESSED_VIDEO_URL is not exposed to the browser.
  */
 function processedVideoBaseUrl(): string {
@@ -17,8 +17,11 @@ export function videoMedia(id: string) {
         stream: `${base}/master.m3u8`,
         thumbnailTrack: `${base}/sprite.vtt`,
         poster: `${base}/poster.jpg`,
-        previewShort: `${base}/short.gif`,
-        previewLong: `${base}/long.gif`,
+        previewShort: `${base}/short.webp`,
+        previewLong: `${base}/long.mp4`,
+        // Videos transcoded before the WebP/MP4 previews only have these.
+        legacyPreviewShort: `${base}/short.gif`,
+        legacyPreviewLong: `${base}/long.gif`,
     };
 }
 

@@ -35,7 +35,13 @@ export default function VideoGrid({
                             publishedLabel={formatRelativeDate(video.createdAt, now)}
                             publishedIso={video.createdAt.toISOString()}
                             duration={formatDuration(video.duration)}
-                            preview={{ still: media.poster, short: media.previewShort, long: media.previewLong }}
+                            preview={{
+                                still: media.poster,
+                                short: media.previewShort,
+                                long: media.previewLong,
+                                legacyShort: media.legacyPreviewShort,
+                                legacyLong: media.legacyPreviewLong,
+                            }}
                             eager={index < EAGER_CARDS}
                         />
                     );
