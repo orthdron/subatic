@@ -1,43 +1,29 @@
-import {
-    MediaPlayer,
-    MediaProvider,
-    Poster
-} from '@vidstack/react';
-import {
-    DefaultAudioLayout,
-    defaultLayoutIcons,
-    DefaultVideoLayout,
-} from '@vidstack/react/player/layouts/default';
+import { MediaPlayer, MediaProvider, Poster } from "@vidstack/react";
+import { DefaultAudioLayout, defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 
-interface VideoPlayerProps {
-    url: string;
+export interface VideoPlayerProps {
     title: string;
-    vtt?: string;
-    poster?: string;
-    other?: string;
+    stream: string;
+    poster: string;
+    thumbnailTrack?: string;
+    className?: string;
 }
-export default function VideoPlayer({ props }: { props: VideoPlayerProps }) {
-    const { url, poster, vtt, title } = props;
+
+export default function VideoPlayer({ title, stream, poster, thumbnailTrack, className }: VideoPlayerProps) {
     return (
         <MediaPlayer
             autoPlay
-            className="p-0 m-0"
+            className={["player", className].filter(Boolean).join(" ")}
             title={title}
-            src={url}
+            src={stream}
             load="eager"
             aspectRatio="16 / 9"
         >
             <MediaProvider>
-                <Poster
-                    className="vds-poster"
-                    src={poster}
-                    alt={url}
-                />
+                <Poster className="vds-poster" src={poster} alt="" />
             </MediaProvider>
             <DefaultAudioLayout icons={defaultLayoutIcons} />
-            <DefaultVideoLayout icons={defaultLayoutIcons}
-                thumbnails={vtt}
-            />
+            <DefaultVideoLayout icons={defaultLayoutIcons} thumbnails={thumbnailTrack} />
         </MediaPlayer>
     );
 }

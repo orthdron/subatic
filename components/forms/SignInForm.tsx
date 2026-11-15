@@ -1,96 +1,69 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { FormEvent, useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function SignInForm() {
-    const [username, setUsername] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const login = async (event: FormEvent<HTMLFormElement>) => {
+    const signIn = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
             if (!response.ok) {
-                const errorData: { error?: string } = await response.json();
-                throw new Error(errorData.error || 'Login failed');
+                const errorData: { error?: string } = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Sign-in failed. Check your details and try again.");
             }
 
-            // Redirect or update UI on successful login
+            // Full reload so the header picks up the new session.
             window.location.href = "/";
-        } catch (error: any) {
-            if (error.message) {
-                toast.error(error.message);
-            } else {
-                toast.error("Something horrible happened");
-            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Sign-in failed. Try again.");
+            setIsSubmitting(false);
         }
     };
 
-    const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
-    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
-
     return (
-        <form className="space-y-6" onSubmit={login}>
-            <div>
-                <label
-                    htmlFor="username"
-                    className="block text-sm font-medium leading-6 text-white"
-                >
-                    Username or Email
-                </label>
-                <div className="mt-2">
-                    <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        autoComplete=""
-                        required
-                        placeholder="Username"
-                        className="block w-full rounded-md border-0 py-1.5 text-black shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        value={username}
-                        onChange={handleUsernameChange}
-                    />
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center justify-between">
-                    <label
-                        htmlFor="password"
-                        className="block text-sm font-medium leading-6 text-white"
-                    >
-                        Password
-                    </label>
-                </div>
-                <div className="mt-2">
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        placeholder="Enter password"
-                        className="block w-full rounded-md border-0 py-1.5 text-black shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        value={password}
-                        onChange={handlePasswordChange}
-                    />
-                </div>
-            </div>
-
-            <div>
-                <button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" type="submit">
-                    Sign In
-                </button>
-            </div>
-            <Toaster />
+        <form className="space-y-5" onSubmit={signIn}>
+            <Field label="Username or email" htmlFor="username">
+                <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+            </Field>
+            <Field label="Password" htmlFor="password">
+                <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </Field>
+            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Signing in…" : "Sign in"}
+            </Button>
         </form>
     );
 }

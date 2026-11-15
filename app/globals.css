@@ -7,65 +7,89 @@
 @import '@vidstack/react/player/styles/default/layouts/video.css'
   layer(utilities);
 
+/*
+  Subatic palette. The site is a screening room: the chrome stays dark and
+  quiet so the videos are the brightest things on the page. The logo red is
+  reserved for actions, focus and progress.
+*/
 @theme {
-  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-  --background-image-gradient-conic: conic-gradient(
-    from 180deg at 50% 50%,
-    var(--tw-gradient-stops)
-  );
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  --color-auditorium: #131217; /* page background */
+  --color-stage: #1c1a21; /* inputs, panels */
+  --color-stage-raised: #25232b; /* hover, secondary buttons */
+  --color-rail: #2e2b35; /* hairlines and borders */
+  --color-usher: #a19dab; /* secondary text */
+  --color-screen: #f3f1f6; /* primary text */
+  --color-signal: #f4434a; /* logo red: focus, progress, highlights */
+  --color-signal-strong: #d6303a; /* red behind white text (AA contrast) */
+  --color-signal-deep: #b9242d;
+
+  /* Aliases used by the shadcn-style primitives in components/ui */
+  --color-background: var(--color-auditorium);
+  --color-foreground: var(--color-screen);
+  --color-muted-foreground: var(--color-usher);
+  --color-border: var(--color-rail);
+  --color-input: var(--color-rail);
+  --color-ring: var(--color-signal);
+  --color-primary: var(--color-signal-strong);
+  --color-primary-foreground: #ffffff;
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-rail);
   }
-}
 
-@layer utilities {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    background-color: #18181b;
-    color: aliceblue;
+    background-color: var(--color-auditorium);
+    color: var(--color-screen);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-signal) 40%, transparent);
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Video player (vidstack) */
 .player {
-  --brand-color: #f5f5f5;
-  --focus-color: #4e9cf6;
-
-  --audio-brand: var(--brand-color);
-  --audio-focus-ring-color: var(--focus-color);
-  --audio-border-radius: 2px;
-
-  --video-brand: var(--brand-color);
-  --video-focus-ring-color: var(--focus-color);
-  --video-border-radius: 2px;
+  --video-brand: var(--color-signal);
+  --video-focus-ring-color: var(--color-signal);
+  --video-border-radius: 0;
+  --video-border: none;
+  --audio-brand: var(--color-signal);
+  --audio-focus-ring-color: var(--color-signal);
+  --audio-border-radius: 0;
 }
 
-.player[data-view-type="audio"] .vds-poster {
+.player[data-view-type='audio'] .vds-poster {
   display: none;
-}
-
-.player[data-view-type="video"] {
-  aspect-ratio: 16 /9;
-}
-
-.src-buttons {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  margin-top: 40px;
-  margin-inline: auto;
-  max-width: 300px;
 }

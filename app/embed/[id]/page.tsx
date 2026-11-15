@@ -1,49 +1,46 @@
 import VideoPlayer from "@/components/video/VideoPlayer";
-import { db } from "@/database/db";
-import { redirect } from "next/navigation";
+import { videoMedia } from "@/lib/media";
+import { getVideoWithAuthor } from "@/lib/videos";
+import { Metadata } from "next";
 
-async function fetchVideoData(id: string) {
-    return await db.selectFrom('video')
-        .innerJoin('user', 'user.id', 'video.userId')
-        .select(['video.id', 'video.title', 'video.description', 'user.userName'])
-        .where('video.id', '=', id)
-        .limit(1)
-        .executeTakeFirst();
-}
+type Props = { params: Promise<{ id: string }> };
 
-export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
-    const { id } = params;
-    const video = await fetchVideoData(id);
-
+export async function generateMetadata(props: Props): Promise<Metadata> {
+    const { id } = await props.params;
+    const video = await getVideoWithAuthor(id);
+    // Don't reveal titles of videos that aren't published yet.
+    if (!video || video.status !== "DONE") return { title: "Video unavailable" };
     return {
-        title: `Subatic - ${video?.title}`,
-        description: `${video?.description}`,
+        title: video.title,
+        description: video.description,
     };
 }
 
-export default async function Page(props0: { params: Promise<{ id: string }> }) {
-    const params = await props0.params;
-    const { id } = params;
-    const video = await fetchVideoData(id);
+export default async function EmbedPage(props: Props) {
+    const { id } = await props.params;
+    const video = await getVideoWithAuthor(id);
 
-    if (!video) {
-        redirect('/');
+    // Inside an iframe a redirect would load the whole site, so explain instead.
+    if (!video || video.status !== "DONE") {
+        return (
+            <div className="p-6 text-center">
+                <p className="font-medium text-screen">This video isn&apos;t available</p>
+                <p className="mt-1 text-sm text-usher">
+                    {video ? "It's still being processed. Try again in a few minutes." : "It may have been removed."}
+                </p>
+            </div>
+        );
     }
 
-    const publicUrl = process.env.PROCESSED_VIDEO_URL!.replace(/\/+$/, '');
-    if (!publicUrl) {
-        throw new Error("PROCESSED_VIDEO_URL is not defined");
-    }
-
-    const videoProps = {
-        url: `${publicUrl}/${id}/master.m3u8`,
-        vtt: `${publicUrl}/${id}/sprite.vtt`,
-        poster: `${publicUrl}/${id}/poster.jpg`,
-        ...video
-    };
+    const media = videoMedia(id);
 
     return (
-        <VideoPlayer props={videoProps} />
+        <VideoPlayer
+            title={video.title}
+            stream={media.stream}
+            poster={media.poster}
+            thumbnailTrack={media.thumbnailTrack}
+            className="w-full max-w-[calc(100dvh*16/9)]"
+        />
     );
 }

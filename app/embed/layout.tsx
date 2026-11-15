@@ -1,24 +1,7 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../globals.css";
+import { ReactNode } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-    title: "Subatic",
-    description: "Video hosting for all",
-};
-
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
-    return (
-        <html lang="en">
-            <body>
-                {children}
-            </body>
-        </html>
-    );
+// Embeds render inside third-party iframes: no site chrome, just the player,
+// letterboxed to fit whatever size the host page gives the iframe.
+export default function EmbedLayout({ children }: { children: ReactNode }) {
+    return <div className="flex h-dvh w-full items-center justify-center overflow-hidden bg-black">{children}</div>;
 }
