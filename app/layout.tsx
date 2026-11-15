@@ -36,7 +36,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en" className={archivo.variable}>
+        // Browser extensions often add attributes to <html> before React hydrates
+        // (e.g. data-gs-image-helper); this only ignores attribute diffs on this element.
+        <html lang="en" className={archivo.variable} suppressHydrationWarning>
             <body>
                 {children}
                 <Toaster
