@@ -23,7 +23,7 @@ export default function SiteFooter() {
                         Source code
                     </a>
                     <a
-                        href="https://twitter.com/orthdron"
+                        href="https://www.linkedin.com/in/kapoor-deepak/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={linkClass}
