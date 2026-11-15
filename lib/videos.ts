@@ -45,6 +45,16 @@ export async function listMoreVideos(excludeId: string, limit = 8): Promise<Publ
         .execute();
 }
 
+/** Every published video, newest first, for the sitemap. */
+export async function listAllPublishedVideos() {
+    return db
+        .selectFrom("video")
+        .select(["id", "title", "description", "duration", "createdAt"])
+        .where("status", "=", "DONE")
+        .orderBy("createdAt", "desc")
+        .execute();
+}
+
 /** A single video with its uploader, used by the watch and embed pages. */
 export async function getVideoWithAuthor(id: string) {
     return db

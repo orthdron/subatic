@@ -6,9 +6,9 @@ import VideoGrid from "@/components/video/VideoGrid";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import { formatDate, formatRelativeDate, isoDuration } from "@/lib/format";
 import { videoMedia } from "@/lib/media";
+import { requestOrigin } from "@/lib/site-url";
 import { getVideoWithAuthor, listMoreVideos, type PublishedVideo } from "@/lib/videos";
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VideoObject, WithContext } from "schema-dts";
@@ -61,10 +61,7 @@ export default async function WatchPage(props: Props) {
         console.error("Error fetching more videos:", error);
     }
 
-    const headersList = await headers();
-    const host = headersList.get("host") || "";
-    const protocol = headersList.get("x-forwarded-proto") || "http";
-    const origin = `${protocol}://${host}`;
+    const origin = await requestOrigin();
     const embedUrl = `${origin}/embed/${id}`;
 
     const schema: WithContext<VideoObject> = {
