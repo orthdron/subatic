@@ -1,119 +1,99 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { FormEvent, useState } from "react";
+import { toast } from "react-hot-toast";
+
+// Mirrors the checks in app/api/auth/signup/route.ts
+const USERNAME_PATTERN = "[a-z0-9_\\-]{3,31}";
+const MIN_PASSWORD_LENGTH = 6;
 
 export default function SignUpForm() {
-    const [username, setUsername] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const signup = async (event: FormEvent<HTMLFormElement>) => {
+    const signUp = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password }),
             });
 
             if (!response.ok) {
-                const errorData: { error?: string } = await response.json();
-                throw new Error(errorData.error || 'Login failed');
+                const errorData: { error?: string } = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Couldn't create the account. Try again.");
             }
 
-            // Redirect or update UI on successful login
+            // Full reload so the header picks up the new session.
             window.location.href = "/";
-        } catch (error: any) {
-            if (error.message) {
-                toast.error(error.message);
-            } else {
-                toast.error("Something horrible happened");
-            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Couldn't create the account. Try again.");
+            setIsSubmitting(false);
         }
     };
 
-    const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
-    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
-    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
-
     return (
-        <form className="space-y-6" onSubmit={signup}>
-            <div>
-                <label
-                    htmlFor="email"
-                    className="block text-sm font-medium leading-6 text-white"
-                >
-                    Email address
-                </label>
-                <div className="mt-2">
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        placeholder="Enter email"
-                        className="block w-full rounded-md border-0 py-1.5 text-black shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        value={email}
-                        onChange={handleEmailChange}
-                    />
-                </div>
-            </div>
-            <div>
-                <label
-                    htmlFor="username"
-                    className="block text-sm font-medium leading-6 text-white"
-                >
-                    Username
-                </label>
-                <div className="mt-2">
-                    <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        autoComplete=""
-                        required
-                        placeholder="Username"
-                        className="block w-full rounded-md border-0 py-1.5 text-black shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        value={username}
-                        onChange={handleUsernameChange}
-                    />
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center justify-between">
-                    <label
-                        htmlFor="password"
-                        className="block text-sm font-medium leading-6 text-white"
-                    >
-                        Password
-                    </label>
-                </div>
-                <div className="mt-2">
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        placeholder="Enter password"
-                        className="block w-full rounded-md border-0 py-1.5 text-black shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        value={password}
-                        onChange={handlePasswordChange}
-                    />
-                </div>
-            </div>
-
-            <div>
-                <button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" type="submit">
-                    Sign Up
-                </button>
-            </div>
-            <Toaster />
+        <form className="space-y-5" onSubmit={signUp}>
+            <Field label="Email" htmlFor="email">
+                <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+            </Field>
+            <Field
+                label="Username"
+                htmlFor="username"
+                hintId="username-hint"
+                hint="3–31 characters: lowercase letters, numbers, hyphens and underscores."
+            >
+                <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    pattern={USERNAME_PATTERN}
+                    aria-describedby="username-hint"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+            </Field>
+            <Field
+                label="Password"
+                htmlFor="password"
+                hintId="password-hint"
+                hint={`At least ${MIN_PASSWORD_LENGTH} characters.`}
+            >
+                <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    minLength={MIN_PASSWORD_LENGTH}
+                    aria-describedby="password-hint"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </Field>
+            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating account…" : "Create account"}
+            </Button>
         </form>
     );
 }

@@ -1,58 +1,65 @@
-import Link from "next/link";
+"use client";
 
-interface Video {
+import Link from "next/link";
+import { useState } from "react";
+
+export interface VideoCardProps {
     id: string;
     title: string;
-    description: string;
-    createdAt: Date;
-    status: string;
+    author: string;
+    /** Pre-formatted on the server, e.g. "3 days ago", to avoid hydration drift. */
+    publishedLabel: string;
+    publishedIso: string;
+    duration: string | null;
+    preview: { still: string; short: string; long: string };
+    /** Load immediately instead of lazily (for cards above the fold). */
+    eager?: boolean;
 }
 
-const VideoCard: React.FC<{ video: Video; publicUrl: string }> = ({ video, publicUrl }) => {
-    const baseUrl = publicUrl.endsWith('/') ? publicUrl : `${publicUrl}/`;
+/**
+ * Public grid tile. The slow "short" GIF loops at rest; hovering or focusing
+ * the card swaps in the faster "long" preview. With reduced motion the
+ * still poster is shown instead.
+ */
+export default function VideoCard({ id, title, author, publishedLabel, publishedIso, duration, preview, eager }: VideoCardProps) {
+    const [isPreviewing, setIsPreviewing] = useState(false);
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
-            <div className="p-4">
-                <h2 className="text-xl font-bold mb-2 truncate">{video.title}</h2>
-                <p className="text-gray-600 mb-2 line-clamp-2">{video.description}</p>
-                {video.status === "DONE" ? (
-                    <div className="flex space-x-4 mb-4">
+        <article className="group min-w-0">
+            <Link
+                href={`/video/${id}`}
+                className="block rounded-md focus-visible:outline-offset-4"
+                onMouseEnter={() => setIsPreviewing(true)}
+                onMouseLeave={() => setIsPreviewing(false)}
+                onFocus={() => setIsPreviewing(true)}
+                onBlur={() => setIsPreviewing(false)}
+            >
+                <div className="relative aspect-video overflow-hidden rounded-md bg-stage ring-1 ring-white/5 transition-[box-shadow] group-hover:ring-white/20">
+                    <picture>
+                        <source media="(prefers-reduced-motion: reduce)" srcSet={preview.still} />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            alt="Short preview"
-                            src={`${baseUrl}${video.id}/short.gif`}
-                            className="w-24 h-24 object-cover rounded-sm"
+                            src={isPreviewing ? preview.long : preview.short}
+                            alt=""
+                            loading={eager ? "eager" : "lazy"}
+                            decoding="async"
+                            className="size-full object-cover"
                         />
-                        <img
-                            alt="Long preview"
-                            src={`${baseUrl}${video.id}/long.gif`}
-                            className="w-24 h-24 object-cover rounded-sm"
-                        />
-                    </div>
-                ) : (
-                    <div className="mb-4 p-2 bg-gray-700 rounded-sm text-center text-white">
-                        <span className="text-lg font-semibold">Status: {video.status}</span>
-                    </div>
-                )}
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center">
-                        <span className="mr-1">🕒</span>
-                        {video.createdAt.toLocaleDateString()}
-                    </div>
-
-                    <Link href={`/video/${video.id}`} className="text-blue-500 hover:text-blue-700 transition-colors flex items-center">
-                        <span className="mr-1">▶️</span>
-                        Watch
-                    </Link>
-
-                    <Link href={`/edit/${video.id}`} className="text-blue-500 hover:text-blue-700 transition-colors flex items-center">
-                        <span className="mr-1">✏️</span>
-                        Edit
-                    </Link>
+                    </picture>
+                    {duration && (
+                        <span className="absolute bottom-1.5 right-1.5 rounded-sm bg-black/80 px-1.5 py-0.5 text-xs font-medium tabular-nums text-white">
+                            {duration}
+                        </span>
+                    )}
                 </div>
-            </div>
-        </div>
+                <h2 className="mt-3 line-clamp-2 text-[15px] font-medium leading-snug text-screen">{title}</h2>
+            </Link>
+            <p className="mt-1 flex justify-between gap-3 text-[13px] text-usher">
+                <span className="truncate">{author}</span>
+                <time dateTime={publishedIso} className="shrink-0">
+                    {publishedLabel}
+                </time>
+            </p>
+        </article>
     );
-};
-
-export default VideoCard;
+}

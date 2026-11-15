@@ -1,25 +1,16 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
+/** Shared look for text inputs and textareas. 16px text on phones avoids iOS zoom. */
+export const fieldControlClass =
+  "w-full rounded-md border border-rail bg-stage px-3 text-base text-screen transition-colors placeholder:text-usher/70 hover:border-[#3d3945] focus-visible:border-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal/25 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-signal sm:text-sm";
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className={cn(
-          "h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
-Input.displayName = "Input"
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-export { Input }
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, ...props }, ref) => {
+  return <input type={type} className={cn(fieldControlClass, "h-10", className)} ref={ref} {...props} />;
+});
+Input.displayName = "Input";
+
+export { Input };
