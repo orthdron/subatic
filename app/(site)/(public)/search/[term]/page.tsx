@@ -76,9 +76,11 @@ export default async function SearchPage(props: Props) {
             </div>
             <VideoGrid
                 videos={videos}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                hrefForPage={(page) => (page === 1 ? basePath : `${basePath}?page=${page}`)}
+                pagination={{
+                    currentPage,
+                    totalPages,
+                    hrefForPage: (page) => (page === 1 ? basePath : `${basePath}?page=${page}`),
+                }}
             />
         </PageContainer>
     );

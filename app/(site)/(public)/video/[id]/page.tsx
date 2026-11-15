@@ -1,11 +1,16 @@
+import PageContainer from "@/components/layout/PageContainer";
+import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import ShareVideo from "@/components/video/ShareVideo";
+import VideoGrid from "@/components/video/VideoGrid";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import { formatDate, formatRelativeDate, isoDuration } from "@/lib/format";
 import { videoMedia } from "@/lib/media";
-import { getVideoWithAuthor } from "@/lib/videos";
+import { getVideoWithAuthor, listMoreVideos, type PublishedVideo } from "@/lib/videos";
 import { Metadata } from "next";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { VideoObject, WithContext } from "schema-dts";
 
 type Props = { params: Promise<{ id: string }> };
@@ -14,7 +19,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const { id } = await props.params;
     const video = await getVideoWithAuthor(id);
     // Don't reveal titles of videos that aren't published yet.
-    if (!video || video.status !== "DONE") return { title: "Video not found" };
+    if (!video || video.status === "FAILED") return { title: "Video not found" };
+    if (video.status !== "DONE") return { title: "Video not ready yet" };
     return {
         title: video.title,
         description: video.description || `Watch ${video.title} on Subatic`,
@@ -25,11 +31,35 @@ export default async function WatchPage(props: Props) {
     const { id } = await props.params;
     const video = await getVideoWithAuthor(id);
 
-    if (!video || video.status !== "DONE") {
-        redirect("/");
+    // To visitors a video that failed to transcode doesn't exist.
+    if (!video || video.status === "FAILED") {
+        notFound();
+    }
+    if (video.status !== "DONE") {
+        return (
+            <PageContainer>
+                <EmptyState
+                    title="This video isn't ready yet"
+                    body="It's still being uploaded or processed. Check back in a few minutes."
+                    action={
+                        <Link href="/" className={buttonVariants({ variant: "secondary" })}>
+                            Browse videos
+                        </Link>
+                    }
+                />
+            </PageContainer>
+        );
     }
 
     const media = videoMedia(id);
+
+    let moreVideos: PublishedVideo[] = [];
+    try {
+        moreVideos = await listMoreVideos(id);
+    } catch (error) {
+        // The video itself still plays; only the suggestions are missing.
+        console.error("Error fetching more videos:", error);
+    }
 
     const headersList = await headers();
     const host = headersList.get("host") || "";
@@ -97,6 +127,15 @@ export default async function WatchPage(props: Props) {
                     <ShareVideo pageUrl={`${origin}/video/${id}`} embedCode={embedCode} />
                 </aside>
             </div>
+
+            {moreVideos.length > 0 && (
+                <section aria-labelledby="more-videos" className="mx-auto w-full max-w-6xl px-4 pt-14 sm:px-6 lg:px-8">
+                    <h2 id="more-videos" className="mb-6 text-2xl font-semibold font-stretch-condensed tracking-tight">
+                        More videos
+                    </h2>
+                    <VideoGrid videos={moreVideos} eagerCount={0} />
+                </section>
+            )}
         </>
     );
 }

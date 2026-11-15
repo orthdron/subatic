@@ -7,17 +7,16 @@ import type { PublishedVideo } from "@/lib/videos";
 /** The first row at the widest layout is above the fold, so skip lazy loading there. */
 const EAGER_CARDS = 4;
 
-/** Grid of published videos with a pager underneath. */
+/** Grid of published videos, with a pager underneath when given one. */
 export default function VideoGrid({
     videos,
-    currentPage,
-    totalPages,
-    hrefForPage,
+    pagination,
+    eagerCount = EAGER_CARDS,
 }: {
     videos: PublishedVideo[];
-    currentPage: number;
-    totalPages: number;
-    hrefForPage: (page: number) => string;
+    pagination?: { currentPage: number; totalPages: number; hrefForPage: (page: number) => string };
+    /** Cards to load right away; pass 0 for a grid that starts below the fold. */
+    eagerCount?: number;
 }) {
     const now = new Date();
 
@@ -42,12 +41,12 @@ export default function VideoGrid({
                                 legacyShort: media.legacyPreviewShort,
                                 legacyLong: media.legacyPreviewLong,
                             }}
-                            eager={index < EAGER_CARDS}
+                            eager={index < eagerCount}
                         />
                     );
                 })}
             </div>
-            <Pagination className="mt-12" currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
+            {pagination && <Pagination className="mt-12" {...pagination} />}
         </>
     );
 }

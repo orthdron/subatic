@@ -84,9 +84,11 @@ export default async function Home(props: { searchParams: Promise<{ page?: strin
             </div>
             <VideoGrid
                 videos={videos}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                hrefForPage={(page) => (page === 1 ? "/" : `/?page=${page}`)}
+                pagination={{
+                    currentPage,
+                    totalPages,
+                    hrefForPage: (page) => (page === 1 ? "/" : `/?page=${page}`),
+                }}
             />
         </PageContainer>
     );

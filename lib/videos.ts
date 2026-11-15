@@ -32,6 +32,19 @@ export async function listPublishedVideos({ page, search }: { page: number; sear
 
 export type PublishedVideo = Awaited<ReturnType<typeof listPublishedVideos>>["videos"][number];
 
+/** Other published videos for the watch page, picked at random so older ones get seen too. */
+export async function listMoreVideos(excludeId: string, limit = 8): Promise<PublishedVideo[]> {
+    return db
+        .selectFrom("video")
+        .innerJoin("user", "user.id", "video.userId")
+        .where("video.status", "=", "DONE")
+        .where("video.id", "!=", excludeId)
+        .select(["video.id", "video.title", "video.duration", "video.createdAt", "user.userName"])
+        .orderBy(sql`random()`)
+        .limit(limit)
+        .execute();
+}
+
 /** A single video with its uploader, used by the watch and embed pages. */
 export async function getVideoWithAuthor(id: string) {
     return db
