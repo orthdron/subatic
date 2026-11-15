@@ -5,7 +5,14 @@ import { z } from "zod";
 const requestSchema = z.object({
     id: z.string(),
     status: z.enum(["DONE", "FAILED"]),
-    duration: z.number().optional(),
+    // Seconds. video.duration is an `integer` column, so a fractional value
+    // (e.g. 95.3 from ffprobe) or one past the int4 range would fail the update.
+    duration: z
+        .number()
+        .nonnegative()
+        .max(2_147_483_647)
+        .transform((seconds) => Math.round(seconds))
+        .optional(),
 });
 
 export async function POST(req: NextRequest) {
