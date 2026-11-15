@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import ManagedVideoRow from "@/components/video/ManagedVideoRow";
 import { validateRequest } from "@/lib/auth";
+import { signInPath } from "@/lib/return-path";
 import { videoMedia } from "@/lib/media";
 import { listUserVideos } from "@/lib/videos";
 import { Upload } from "lucide-react";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default async function MyVideosPage() {
     const { user } = await validateRequest();
     if (!user) {
-        redirect("/");
+        redirect(signInPath("/videos"));
     }
 
     const videos = await listUserVideos(user.id);

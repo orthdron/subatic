@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 
-export default function SignInForm() {
+/** `next`: an already-validated path on this site to open afterwards (see safeReturnPath). */
+export default function SignInForm({ next = "/" }: { next?: string }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +29,7 @@ export default function SignInForm() {
             }
 
             // Full reload so the header picks up the new session.
-            window.location.href = "/";
+            window.location.href = next;
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Sign-in failed. Try again.");
             setIsSubmitting(false);

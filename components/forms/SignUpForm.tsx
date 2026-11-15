@@ -10,7 +10,8 @@ import { toast } from "react-hot-toast";
 const USERNAME_PATTERN = "[a-z0-9_\\-]{3,31}";
 const MIN_PASSWORD_LENGTH = 6;
 
-export default function SignUpForm() {
+/** `next`: an already-validated path on this site to open afterwards (see safeReturnPath). */
+export default function SignUpForm({ next = "/" }: { next?: string }) {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -33,7 +34,7 @@ export default function SignUpForm() {
             }
 
             // Full reload so the header picks up the new session.
-            window.location.href = "/";
+            window.location.href = next;
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Couldn't create the account. Try again.");
             setIsSubmitting(false);

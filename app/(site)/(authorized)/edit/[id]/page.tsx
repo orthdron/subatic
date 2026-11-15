@@ -2,6 +2,7 @@ import EditVideoForm from "@/components/forms/EditVideoForm";
 import PageContainer from "@/components/layout/PageContainer";
 import StatusBadge from "@/components/video/StatusBadge";
 import { validateRequest } from "@/lib/auth";
+import { signInPath } from "@/lib/return-path";
 import { getUserVideo } from "@/lib/videos";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
@@ -18,7 +19,7 @@ export default async function EditPage(props: { params: Promise<{ id: string }> 
 
     const { user } = await validateRequest();
     if (!user) {
-        return redirect("/");
+        return redirect(signInPath(`/edit/${encodeURIComponent(id)}`));
     }
 
     const video = await getUserVideo(user.id, id);

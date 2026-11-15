@@ -1,6 +1,7 @@
 import UploadVideoForm from "@/components/forms/UploadVideoForm";
 import PageContainer from "@/components/layout/PageContainer";
 import { validateRequest } from "@/lib/auth";
+import { signInPath } from "@/lib/return-path";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default async function UploadPage() {
     const { user } = await validateRequest();
     if (!user) {
-        return redirect("/");
+        return redirect(signInPath("/upload"));
     }
 
     // MAX_FILE_SIZE is in megabytes.
