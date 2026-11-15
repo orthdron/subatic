@@ -1,22 +1,13 @@
-import { listExpiredVideoIds, rejectUnlessWebhookToken, retentionPolicy } from "@/lib/retention";
+import { authorizeRetention, listExpiredVideoIds } from "@/lib/retention";
 import { NextRequest, NextResponse } from "next/server";
 
-/** GET ?olderThanDays=30&keepUser=admin[&keepUser=...] -> { ids: [...] } */
+/** GET -> { ids, policy }: videos past the configured retention policy. 404 while retention is off. */
 export async function GET(req: NextRequest) {
-    const rejected = rejectUnlessWebhookToken(req);
-    if (rejected) return rejected;
-
-    const params = req.nextUrl.searchParams;
-    const policy = retentionPolicy.safeParse({
-        olderThanDays: params.get("olderThanDays"),
-        keepUsers: params.getAll("keepUser"),
-    });
-    if (!policy.success) {
-        return NextResponse.json({ error: "Invalid input", details: policy.error.issues }, { status: 400 });
-    }
+    const policy = authorizeRetention(req);
+    if (policy instanceof NextResponse) return policy;
 
     try {
-        return NextResponse.json({ ids: await listExpiredVideoIds(policy.data) });
+        return NextResponse.json({ ids: await listExpiredVideoIds(policy), policy });
     } catch (error) {
         console.error("Error listing expired videos:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
