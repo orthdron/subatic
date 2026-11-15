@@ -13,7 +13,8 @@ type Props = { params: Promise<{ id: string }> };
 export async function generateMetadata(props: Props): Promise<Metadata> {
     const { id } = await props.params;
     const video = await getVideoWithAuthor(id);
-    if (!video) return { title: "Video not found" };
+    // Don't reveal titles of videos that aren't published yet.
+    if (!video || video.status !== "DONE") return { title: "Video not found" };
     return {
         title: video.title,
         description: video.description || `Watch ${video.title} on Subatic`,
